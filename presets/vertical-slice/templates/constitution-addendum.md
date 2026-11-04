@@ -1,0 +1,14 @@
+<!-- vertical-slice:constitution -->
+
+## Vertical Slice Principles
+
+Place this section after Core Principles and before Governance, and adapt it to the project.
+
+These principles add to Core Principles and replace none of them. Fill the core principle slots as you would without this section, and keep any core principle the user asks to adopt. If a core principle seems to conflict with a principle here, keep both and apply the core principle at context level. For example, a library-first principle means each context is a library.
+
+- **Context, then slice**: Code MUST be organized by bounded context and then by feature slice. Every context MUST use the Project Structure, so every file has one place. Technical-layer folders MUST NOT be the primary structure. A language or a client MUST NOT create a context on its own.
+- **Slices own shapes**: Each slice owns its request, response, and view models and its tests.
+- **Single owner for rules**: A domain rule used by several slices MUST have one owner and MUST NOT be duplicated.
+- **Contracts between contexts**: Contexts MUST interact only through named shared contracts.
+- **Values have one home**: Config, meaning what varies between deploys, MUST come from environment variables, and credentials MUST stay outside the repository. Facts a client sees, such as versions, limits, patterns, and error codes, MUST be declared in the contract document. Business data such as roles and policies MUST live in the store. Only internal values that no client sees and no deploy changes MAY stay in code, each named and defined once.
+- **CQRS per context**: Each context MUST record its own decision, defaulting to separate read and write code over one store.

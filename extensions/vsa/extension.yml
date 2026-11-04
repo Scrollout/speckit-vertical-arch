@@ -1,0 +1,35 @@
+schema_version: "1.0"
+
+extension:
+  id: vsa
+  name: "Vertical Slice Check"
+  version: "0.13.0"
+  description: "Checks a feature's artifacts and code against the vertical slice rules. Requires the vertical-slice preset."
+  category: "process"
+  effect: "read-only"
+  author: "Marius Gologan"
+  license: MIT
+
+requires:
+  speckit_version: ">=1.2.5"
+
+provides:
+  commands:
+    - name: speckit.vsa.check
+      file: commands/speckit.vsa.check.md
+      description: "Check the current feature against the vertical slice rules"
+
+hooks:
+  after_tasks:
+    command: speckit.vsa.check
+    optional: false
+    description: "Check generated tasks against the vertical slice rules"
+  after_implement:
+    command: speckit.vsa.check
+    optional: false
+    description: "Check implemented code against the vertical slice rules"
+
+tags:
+  - "architecture"
+  - "vertical-slice"
+  - "quality"

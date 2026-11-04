@@ -1,0 +1,56 @@
+schema_version: "1.0"
+
+preset:
+  id: "vertical-slice"
+  name: "Vertical Slice"
+  version: "0.19.0"
+  description: "Makes Spec-Kit organize plans, tasks, and implementation by bounded context and feature slice"
+  author: "Marius Gologan"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=1.2.5"
+
+provides:
+  templates:
+    - type: "template"
+      name: "plan-template"
+      file: "templates/plan-template.md"
+      strategy: "replace"
+      description: "Changes the core source trees of models, services, and api folders to context and slice. Replace is needed because composition cannot remove those trees."
+    - type: "template"
+      name: "tasks-template"
+      file: "templates/tasks-template.md"
+      strategy: "replace"
+      description: "Changes the core Foundational entity tasks and the 'Models before services' order to slice groups. Replace is needed because composition cannot remove them."
+    - type: "command"
+      name: "speckit.tasks"
+      file: "commands/speckit.tasks.prepend.md"
+      strategy: "prepend"
+      description: "Puts slice grouping and ordering rules ahead of the core task generation steps, and states that they take precedence over the core 'Tests, Models, Services, Endpoints, Integration' order and layered examples."
+    - type: "command"
+      name: "speckit.plan"
+      file: "commands/speckit.plan.append.md"
+      strategy: "append"
+      description: "Appends context, Slice Map, Project Structure, per-slice model, value, and boundary check rules to the core planning steps, and states that they take precedence over the core 'Extract entities from feature spec' step that writes one feature-wide data-model.md."
+    - type: "command"
+      name: "speckit.analyze"
+      file: "commands/speckit.analyze.append.md"
+      strategy: "append"
+      description: "Appends slice consistency checks to the core detection passes, and states that they take precedence over the core severity heuristic, which would rank a layered task order as 'Style/wording improvements'."
+
+    - type: "command"
+      name: "speckit.implement"
+      file: "commands/speckit.implement.prepend.md"
+      strategy: "prepend"
+      description: "Puts one-slice-at-a-time and test command rules ahead of the core 'Implement models, services' step, and states that they take precedence."
+    - type: "template"
+      name: "constitution-template"
+      file: "templates/constitution-addendum.md"
+      strategy: "append"
+      description: "Adds vertical slice principles after the core principles, without replacing any of them."
+
+tags:
+  - "architecture"
+  - "vertical-slice"
+  - "workflow"
