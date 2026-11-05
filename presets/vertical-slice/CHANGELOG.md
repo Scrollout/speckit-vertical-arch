@@ -19,6 +19,10 @@
 
 ### Changed
 
+- The plan template has Values and Boundary Check sections, which the rules and the vsa check already referred to.
+- The boundary check expresses "only a slice's repository and infrastructure import the store library" by forbidding whole packages and exempting `*.repository` by pattern, with wildcards for every per-slice rule, so new files and slices are covered without edits.
+- Similar data access in two slices' repositories is not a shared rule: each slice keeps its own repository, and only a rule that decides correctness moves to `domain/`.
+
 - Slice folder placeholders and examples use `snake_case`, such as `place_order`, replacing `place-order`, which Python and Java cannot import.
 - The boundary check also requires that `hosts/` imports only each context's `apps/`.
 - Program folders in `apps/` use `snake_case`, such as `http_public`, replacing `http-public`, because hosts import them.

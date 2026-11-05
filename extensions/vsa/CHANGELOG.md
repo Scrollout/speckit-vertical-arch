@@ -15,6 +15,9 @@
 
 ### Changed
 
+- The report's first column is the rule ID (`VSA-00N`), one row per finding, replacing an ambiguous ID column.
+- VSA-004 does not report similar data access in two slices' repositories, only a duplicated rule that decides correctness.
+
 - Exceptions match rows in the plan's Slice Rule Exceptions table instead of Complexity Tracking.
 - VSA-001 guidance is split into one bullet per finding, with unchanged wording.
 - The README lists only rule IDs, names, and severities. The command file is the single source of rule wording.

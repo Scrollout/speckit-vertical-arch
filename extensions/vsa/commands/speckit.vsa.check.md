@@ -80,7 +80,7 @@ Check VSA-006 first. When the test command runs the boundary check and the check
   A program folder named by what starts it, including a name outside the planning rules' examples, such as `stream/`, is not a finding. A Shared Domain Rules row that names fewer than two slices is a finding at the review after tasks, before any code is written.
 - VSA-002: check the order of tasks inside each story phase. A sequence such as models, then services, then endpoints is a finding.
 - VSA-003: check reach between slices and between contexts that a static check cannot see, such as a shared file, a string route, or an environment value one side sets and the other reads. Using a shared owner or a named contract is allowed. Report a direct import here only when VSA-006 found the boundary check missing, not run by the test command, or not covering that rule.
-- VSA-004: report a warning when two slices of the same context appear to hold the same rule, even if you are unsure. A copy in another context is not a finding: contexts share no code, and each owns its own model.
+- VSA-004: report a warning when two slices of the same context appear to hold the same rule, even if you are unsure. Similar data access in two slices' repositories is not a finding: each slice owns its reads and writes. Only a duplicated rule that decides correctness is. A copy in another context is not a finding: contexts share no code, and each owns its own model.
 - VSA-005: search all code outside tests for values that vary between deploys, such as addresses, ports, file paths, and credentials, and for published types and versions outside `manifest` and contract documents. Compare every limit, pattern, enum, and error code the code enforces on a request with the contract document: one the contract does not declare is a finding, unless a contract test proves the code matches it. So is business data, such as roles or policies, written in code, and a `manifest` written as code. A local default in `entrypoints/` that is not a credential does not count, nor do tests and contract examples. Report a bare or repeated internal value as a VSA-004 warning.
 - VSA-006: read the plan, the project's test command, and how it decides its exit code. Report the boundary check or the contract checks missing from the test command, a step that exits 0 when its tool is missing or when it checked nothing, a boundary rule from the planning rules that the check's configuration does not cover, a contract check missing for a context that publishes versioned contracts, a context with no tests, and a deployed artifact that can hold a test file: no exclusion of `tests/` for its stack, or no check of the built artifact in the test command.
 - VSA-007 to VSA-010 apply only when the plan has a Deployment Topology, Events, or Workflows section, or the code publishes or consumes events. Otherwise skip them and say so under **Examined**.
@@ -95,7 +95,7 @@ An exception matches when a row in the plan's Slice Rule Exceptions table names 
 
 ## 5. Report
 
-Print this report, using the highest applicable status:
+Print this report, using the highest applicable status. Each row's first column is the rule ID, such as `VSA-003`, one row per finding:
 
 - `FAIL`: at least one blocking finding has no matching exception. The next step tells the developer not to proceed until it is fixed or a justified exception is recorded.
 - `WARN`: no unaccepted blocking findings, and at least one warning. Work may continue.
@@ -109,7 +109,7 @@ Print this report, using the highest applicable status:
 **Examined**: <artifacts and code scope>
 **Not examined**: <artifacts and reasons, or None>
 
-| ID | Severity | Rule | Location | Detail |
+| Rule | Severity | Finding | Location | Detail |
 |---|---|---|---|---|
 
 **Accepted exceptions**: <rule, location, and reason, or None>

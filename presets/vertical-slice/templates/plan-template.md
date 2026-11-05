@@ -152,6 +152,31 @@
 |---|---|---|---|---|
 | [read_model] | [Context] | [EventA, EventB] → update_[read_model] | [get_ or list_ slice] | [How it is rebuilt from events or the write store] |
 
+## Values
+
+<!--
+  Every value the feature introduces, and its one home, as the planning rules' value table gives it:
+  environment variables for config, outside the repository for credentials, the contract document and
+  manifest for facts a client sees, the store for business data, and code for internal values only.
+-->
+
+| Value | Home |
+|---|---|
+| [Value or group of values] | [Environment variable, contract document, manifest, store, or code (named once)] |
+
+## Boundary Check
+
+<!--
+  One static dependency check per stack, with its configuration file, covering every rule the planning rules
+  give it. Name the contract checks, how deployed artifacts leave out tests, and the one test command that
+  runs all of them and every context's tests.
+-->
+
+- **[Stack]**: [checker], configured in [file]
+- **Contracts**: [lint and additive-only check per contract kind]
+- **Artifacts**: [rule that leaves tests out, and how the test command checks each built artifact]
+- **Test command**: [command]
+
 ## Existing Code
 
 <!-- Delete this section unless the feature touches a project with layered code. Do not plan to restructure existing code. -->

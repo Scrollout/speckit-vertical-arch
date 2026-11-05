@@ -28,7 +28,7 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 | `hosts/[host_name]/` | Only when contexts share one process: the entry point and wiring that start each context's `entrypoints/[trigger]/` together. No feature code and no business rules. Each context keeps its own `entrypoints/`, so moving it to its own service changes no context code |
 
 - No code sits at the context root: every source file goes in one of the places above. The root holds `manifest`, documentation, and files a stack or tool requires there.
-- Each slice reads and writes stored data in its own `repository`, over the store setup in `infrastructure/`. A read or write that two slices need for correctness belongs to `domain/` with one owner, never to a shared repository.
+- Each slice reads and writes stored data in its own `repository`, over the store setup in `infrastructure/`. A rule that two slices need for correctness, such as which status changes are allowed, belongs to `domain/` with one owner. Each slice still runs its own reads and writes in its own `repository`, even when two repositories look alike: similar data access is not a shared rule, and is never moved to a shared repository.
 - Adding a slice adds files. Shared code changes only to list the slice in `entrypoints/`, in one line.
 - Two programs started the same way get names that differ and still say what starts them, such as `http_public` and `http_internal`.
 - A program started in two ways is named for its main trigger, and the plan says what else starts it.
@@ -66,11 +66,12 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 
 ### Boundary check
 
-- The plan names one static dependency check for each stack, using the stack's established checker, with its configuration in the repository. Examples: Import Linter for Python, dependency-cruiser for JavaScript and TypeScript, Packwerk for Ruby. Its rules: a slice does not import another slice; a context imports another context only through a named contract; `domain/` and `infrastructure/` never import `features/`; only `entrypoints/` imports slices; `hosts/` imports only each context's `entrypoints/`; and only a slice's `repository` and `infrastructure/` import the store's access library.
+- The plan names one static dependency check for each stack, using the stack's established checker, with its configuration in the repository. Examples: Import Linter for Python, dependency-cruiser for JavaScript and TypeScript, Packwerk for Ruby. Its rules: a slice does not import another slice; a context imports another context only through a named contract; `domain/` and `infrastructure/` never import `features/`; only `entrypoints/` imports slices; `hosts/` imports only each context's `entrypoints/`; and only a slice's `repository` and `infrastructure/` import the store's access library. Express that last rule by forbidding all of `features/`, `entrypoints/`, and `domain/` from importing the store's library and exempting each slice's `repository` by pattern, such as Import Linter's `ignore_imports = orders.features.*.repository -> sqlite3`, never by listing the other files, so a new file or slice is covered without an edit. Use wildcards for every per-slice rule for the same reason.
 - Where a context publishes versioned contracts, lint every contract document and check that each newer version only adds to the one before. Examples for OpenAPI: Spectral for lint, and oasdiff's breaking-change check for the additive rule.
 - The project's one test command runs the boundary check, the contract checks, and every context's tests. It fails when a check finds a problem, when a check's tool is missing, or when a check or a context's tests found nothing to check.
 - Every deployed artifact, such as a container image or a package, leaves out every `tests/` folder and test file, by one rule the plan names for each stack. Example: `**/tests/` in `.dockerignore`. The test command lists the files in each artifact it builds and fails when one holds a test file.
 - Record existing violations in a list the check reads, so only new ones fail, and give the list an owner.
+- Fill the plan's Values and Boundary Check sections. The review after tasks and after implement reads both.
 
 ### Polyglot and multi-team features
 
