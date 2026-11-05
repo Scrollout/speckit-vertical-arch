@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        speckit_ref: [v1.2.5]
+        speckit_ref: [v1.2.5, v1.3.0]
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6

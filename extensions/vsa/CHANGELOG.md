@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.15.0
+
+### Added
+
+- VSA-002 also flags a slice's implementation before its contract or failing tests, and contracts, store schema, or shared models built ahead of the slice that needs them.
+
+- Reviewer order: a fresh sub-agent with no prior context when available, otherwise the same session, recorded on the **Reviewer** line. The user is never asked to run anything.
+- The review finds evidence by progressive distributed disclosure, and every rule that holds says why.
+- VSA-011: work acting on an open, low-confidence, or unsourced decision.
+- VSA-012: a check, threshold, test expectation, or report rule weakened without a recorded reason.
+- VSA-006 also covers hand-kept target lists, missing coverage counts, missing planted-violation or clean tests, and an unenforced retired-terms file.
+
+### Changed
+
+- A re-run receives the previous report, verifies its findings first, and then reviews only what changed.
+- VSA-009 requires a named pivot and compensations only for steps before it.
+- VSA-002 does not flag a Shared group directly before its first slice, or outbox and inbox setup in Foundational.
+
+- The report header is exactly `## VSA Check: <STATUS>`; re-runs go on a **Run** line. Finding columns are Rule, Severity, Location, Evidence, Detail.
+- Supports vertical-slice 0.21.x.
+
 ## 0.14.0
 
 ### Added

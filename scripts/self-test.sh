@@ -107,6 +107,9 @@ includes client
 Client feature slice
 `endpoint`
 order-placed/v1/asyncapi
+Set up the store connection and schema
+| ID | Severity
+one group per slice
 server side
 EOF
 

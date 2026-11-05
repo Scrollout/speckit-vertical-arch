@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.21.0
+
+### Added
+
+- Outside-in, test-first order: a skeleton with checks proven to fail, then per slice only the contract it needs, its failing tests, and the minimal code, including only the store schema its tests need. The sample Foundational task sets up the store connection only.
+- Constitution principle: Outside-in, test-first.
+
+- Research by progressive distributed disclosure and reranking, with a Sources table in `research.md`.
+- Decisions and Open Decisions plan sections: work acts only on decisions at 85% confidence or higher that rest on a deciding source or a test.
+- Every check finds its targets from the folders, reports what it examined, and has a planted-violation test and a clean test. Tool-required lists are compared with the folders.
+- A retired-terms data file that the test command enforces.
+- Constitution principles: Evidence before action, Checks prove they can fail, Fix the cause, Fresh review.
+- Requires vsa `>=0.15.0,<0.16.0`.
+
+### Changed
+
+- Workflows name their pivot. Only steps before the pivot need a compensation; the pivot and later steps are retried until they succeed. The Workflows table gains a Pivot column.
+- The review after tasks and after implement runs at most 3 times per command, each re-run given the previous report, then stops and reports open findings as `FAIL`.
+- A Shared group directly before its first slice, and outbox and inbox setup in Foundational, are not ahead of need.
+
+- Implement resolves new questions by the same research method and leaves code for open decisions unwritten. A failing check is fixed at its cause, never weakened.
+
 ## 0.20.0
 
 ### Added

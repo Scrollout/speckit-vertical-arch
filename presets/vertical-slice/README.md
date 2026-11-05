@@ -49,7 +49,7 @@ The plan template has four optional sections. Each is deleted unless it applies,
 |---|---|
 | Deployment Topology | Contexts deploy as separate services. A service is exactly one context, has its name, and owns its store |
 | Events | Contexts exchange events. Each event is a versioned contract, published via an outbox, with a consumer idempotency key |
-| Workflows | A business process spans contexts. Each step that changes state has a compensation, and each workflow has a timeout |
+| Workflows | A business process spans contexts. It names its pivot, each step before the pivot that changes state has a compensation, and each workflow has a timeout |
 | Read Models | A context's CQRS decision is `separate read model`. Each read model has a rebuild path |
 
 These parts fit the existing Project Structure with no new folders inside a context:
@@ -81,6 +81,19 @@ These parts fit the existing Project Structure with no new folders inside a cont
 Folders that code imports are `snake_case`, the one style every stack can import: hyphens are not importable in Python or legal in Java packages. Names that leave the code are kebab-case: Kubernetes and DNS names allow only lowercase letters, digits, and `-`.
 
 This support is part of this preset, not a separate one. Spec-Kit does not merge templates: the preset with the lowest priority number replaces `plan-template` entirely, so a second preset would have to copy and maintain the whole template.
+
+## Evidence, decisions, and checks
+
+These rules apply to every project:
+
+| Rule | What it requires |
+|---|---|
+| Progressive distributed disclosure | Research maps the sources by their cheapest signal, opens the most promising, re-ranks after each step, follows links to primary sources only when needed, and stops at the deciding evidence. `research.md` records a Sources table |
+| Act at 85% or higher | Each decision has a confidence that rests on its deciding source or a test. Decisions at 85% or higher go to Decisions; the rest go to Open Decisions, and no work acts on them |
+| Checks prove they can fail | Every check finds its targets from the folders, reports what it examined, passes on clean code, and fails on a planted violation |
+| Retired terms are guarded | Renamed or removed names, paths, and patterns are listed in a data file, and the test command fails when one returns |
+| Fix the cause | A failing check is resolved by fixing whichever of the code or the check is wrong, never by weakening the check |
+| Fresh review | The vsa check runs in a fresh sub-agent when the agent supports one, and otherwise in the same session, reported as such |
 
 ## Exceptions
 

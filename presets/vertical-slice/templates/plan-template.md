@@ -130,7 +130,8 @@
 
 <!--
   Delete this section unless a business process spans contexts.
-  Every step that changes state has a compensation, and every workflow has a timeout.
+  Name the pivot: the step after which the workflow can no longer fail. Every step before it that changes state
+  has a compensation; the pivot and later steps are retried until they succeed. Every workflow has a timeout.
   The timeout needs a recorded deadline: name where the step that starts the wait records it, in the same
   transaction, such as a deadline column. The timeout slice finds overdue records through it.
   The workflow's state lives in the owner's domain/[workflow_name]_workflow/. Each step and each
@@ -138,9 +139,9 @@
   its step, such as release_stock for reserve_stock.
 -->
 
-| Workflow | Owner context | Steps (event → slice) | Compensation per step | Timeout | Deadline recorded in |
-|---|---|---|---|---|---|
-| [workflow_name] | [Context] | [EventA → slice_a, EventB → slice_b] | [slice_a: undo_slice_a, slice_b: undo_slice_b] | [Duration and the slice it starts] | [Where, and by which slice, such as orders.deadline by place_order] |
+| Workflow | Owner context | Steps (event → slice) | Pivot | Compensation per step before the pivot | Timeout | Deadline recorded in |
+|---|---|---|---|---|---|---|
+| [workflow_name] | [Context] | [EventA → slice_a, EventB → slice_b] | [slice_b] | [slice_a: undo_slice_a] | [Duration and the slice it starts] | [Where, and by which slice, such as orders.deadline by place_order] |
 
 ## Read Models
 
@@ -177,7 +178,30 @@
 - **[Stack]**: [checker], configured in [file]
 - **Contracts**: [lint and additive-only check per contract kind]
 - **Artifacts**: [rule that leaves tests out, and how the test command checks each built artifact]
+- **Discovery**: [how each check finds contexts, slices, contracts, schemas, and artifacts from the folders]
+- **Coverage**: [what each check reports it examined, and which counts must be above zero]
+- **Planted violations**: [where each check's planted-violation test and clean test live]
+- **Retired terms**: [data file of retired names, paths, and patterns, and its owner]
 - **Test command**: [command]
+
+## Decisions
+
+<!--
+  One row per decision the feature depends on, from research.md. Confidence rests on the deciding source or a
+  test, never on assumption. Act only on decisions at 85% or higher. Move every other decision to Open Decisions.
+-->
+
+| Decision | Confidence | Deciding source |
+|---|---|---|
+| [What was decided] | [85–100%] | [File, URL, or test, as recorded in research.md Sources] |
+
+## Open Decisions
+
+<!-- Decisions below 85%, or without a deciding source. No task or code acts on them. Write None when there are none. -->
+
+| Decision | Confidence | What would settle it |
+|---|---|---|
+| [Open question] | [Below 85%, or unknown] | [Source to check, test to run, or person to ask] |
 
 ## Existing Code
 
@@ -192,7 +216,7 @@
 ```text
 specs/[###-feature]/
 ├── plan.md              # This file (__SPECKIT_COMMAND_PLAN__ command output)
-├── research.md          # Phase 0 output (__SPECKIT_COMMAND_PLAN__ command)
+├── research.md          # Phase 0 output (__SPECKIT_COMMAND_PLAN__ command): each question, its Sources table, decision, and confidence
 ├── data-model.md        # Phase 1 output (__SPECKIT_COMMAND_PLAN__ command): shared domain, then one section per slice
 ├── quickstart.md        # Phase 1 output (__SPECKIT_COMMAND_PLAN__ command)
 ├── contracts/           # Phase 1 output (__SPECKIT_COMMAND_PLAN__ command)

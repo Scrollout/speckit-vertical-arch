@@ -3,7 +3,7 @@ schema_version: "1.0"
 preset:
   id: "vertical-slice"
   name: "Vertical Slice"
-  version: "0.20.0"
+  version: "0.21.0"
   description: "Makes Spec-Kit organize plans, tasks, and implementation by bounded context and feature slice"
   author: "Marius Gologan"
   repository: "https://github.com/Scrollout/speckit-vertical-arch"
@@ -13,7 +13,7 @@ requires:
   speckit_version: ">=1.2.5"
   extensions:
     - id: vsa
-      version: ">=0.14.0,<0.15.0"
+      version: ">=0.15.0,<0.16.0"
       required: false
 
 provides:
@@ -22,7 +22,7 @@ provides:
       name: "plan-template"
       file: "templates/plan-template.md"
       strategy: "replace"
-      description: "Changes the core source trees of models, services, and api folders to context and slice, and adds optional Deployment Topology, Events, Workflows, Read Models, and Slice Rule Exceptions sections. Replace is needed because composition cannot remove those trees."
+      description: "Changes the core source trees of models, services, and api folders to context and slice, and adds optional Deployment Topology, Events, Workflows, Read Models, Values, Boundary Check, Decisions, Open Decisions, and Slice Rule Exceptions sections. Replace is needed because composition cannot remove those trees."
     - type: "template"
       name: "tasks-template"
       file: "templates/tasks-template.md"

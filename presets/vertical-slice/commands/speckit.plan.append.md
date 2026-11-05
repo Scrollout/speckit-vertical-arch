@@ -30,6 +30,14 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 - No code sits at the context root: every source file goes in one of the places above. The root holds `manifest`, documentation, and files a stack or tool requires there.
 - Each slice reads and writes stored data in its own `repository`, over the store setup in `infrastructure/`. A rule that two slices need for correctness, such as which status changes are allowed, belongs to `domain/` with one owner. Each slice still runs its own reads and writes in its own `repository`, even when two repositories look alike: similar data access is not a shared rule, and is never moved to a shared repository.
 - Adding a slice adds files. Shared code changes only to list the slice in `entrypoints/`, in one line.
+- Build outside-in, test-first:
+  1. **Skeleton**: context folders, `manifest`, and the test command with every check proven to fail. No feature code.
+  2. **Contract**: for a slice that crosses a context boundary, write only the contract version that slice needs: its API operation or its event schema.
+  3. **Red**: write the slice's failing tests from the contract and the spec, the contract test first. When tests are not requested, write its acceptance criteria instead.
+  4. **Green**: write the minimal code that passes, including only the store schema changes this slice's tests need, in `infrastructure/`.
+  5. **Refactor**: move a rule to `domain/` only when a second slice needs it.
+
+  Never design a contract, a store schema, or a shared model beyond what the current slice's tests need. A rule in the plan's Shared Domain Rules table is needed by the first slice that uses it, so its `#### Shared:` group placed directly before that slice is not ahead of need. Outbox and inbox setup in Foundational is not ahead of need: it blocks every slice that publishes or consumes.
 - Two programs started the same way get names that differ and still say what starts them, such as `http_public` and `http_internal`.
 - A program started in two ways is named for its main trigger, and the plan says what else starts it.
 - A portal shell served to browsers is named for incoming requests.
@@ -71,8 +79,19 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 - Where a context publishes versioned contracts, lint every contract document and check that each newer version only adds to the one before. Examples for OpenAPI: Spectral for lint, and oasdiff's breaking-change check for the additive rule.
 - The project's one test command runs the boundary check, the contract checks, and every context's tests. It fails when a check finds a problem, when a check's tool is missing, or when a check or a context's tests found nothing to check.
 - Every deployed artifact, such as a container image or a package, leaves out every `tests/` folder and test file, by one rule the plan names for each stack. Example: `**/tests/` in `.dockerignore`. The test command lists the files in each artifact it builds and fails when one holds a test file.
+- Every check finds its targets from the folders: contexts, slices, contracts, schemas, and artifacts. A new context, slice, or contract is covered without an edit. When a tool needs an explicit list, such as Import Linter's `root_packages`, the test command checks that list against the folders and fails when they differ.
+- Every check prints what it examined, such as `event schemas: 3, version pairs compared: 0, problems: 0`. The test command fails when a count that must be above zero is zero.
+- Every check has a planted-violation test that plants one violation in a temporary copy and expects the check to fail, and a clean test that expects it to pass. The test command runs both. A check without them counts as a check that checked nothing.
+- Names, paths, and patterns the project retires, such as a renamed folder or a removed contract version, are listed in a data file with an owner. The test command fails when a retired term appears outside that file and changelogs.
 - Record existing violations in a list the check reads, so only new ones fail, and give the list an owner.
 - Fill the plan's Values and Boundary Check sections. The review after tasks and after implement reads both.
+
+### Research and decisions
+
+- Resolve each open question by progressive distributed disclosure. The information is spread across the spec, the plan's tables, manifests, contracts, code, tests, and external documents. Map the candidate sources by their cheapest signal, such as headings, table rows, file names, or page titles. Open the most promising one at the smallest useful depth. After each step, re-rank the rest by how likely each is to decide the question, and drop the ones that cannot change it. Follow a link to a primary source only when the current source cannot decide. Stop at the piece of information that decides the question, not when every source is read.
+- Record each question in `research.md` with a **Sources** table: the sources tried, in order, the deciding source (a file, a URL, or a test), and the decision. When the agent cannot reach a primary source, mark the decision `unverified`.
+- Give each decision a confidence that rests on its deciding source or on a test, never on assumption. Copy each decision to the plan's Decisions table when its confidence is 85% or higher, and to Open Decisions otherwise. An `unverified` decision is below 85%.
+- No task and no code acts on an open decision. It stays open until a source or a test raises it to 85% or higher, or the user decides it.
 
 ### Polyglot and multi-team features
 
@@ -93,7 +112,7 @@ These rules apply when contexts deploy as separate services or exchange events. 
 - Every event a context publishes is a versioned contract in its `contracts/[contract-name]/[version]/`, is listed in the publisher's and each consumer's `manifest`, has a row in Events and in Contracts Between Contexts, and is checked additive-only like any other contract.
 - A slice that publishes an event writes it to the outbox in the same transaction as the state change. The outbox, the relay code, and the inbox live in `infrastructure/`. The relay is either polling, run as a line in `entrypoints/queue/` or as its own program in `entrypoints/outbox/`, or log tailing, an external connector the plan's Events table names. Either may publish a message more than once, so every consumer is idempotent.
 - An event consumer is a slice, listed in `entrypoints/queue/`. It names its idempotency key in Events, and records the key in the inbox in the same transaction as its state change, so a duplicate delivery changes nothing.
-- A business process that spans contexts has a row in Workflows. Its state and transitions live in the owner context's `domain/[workflow_name]_workflow/`. Each step is a slice. Every step that changes state names its compensation slice, named for the action that undoes it, and the workflow has a timeout started from `entrypoints/schedule/`.
+- A business process that spans contexts has a row in Workflows. Its state and transitions live in the owner context's `domain/[workflow_name]_workflow/`. Each step is a slice. Name the workflow's pivot: the step after which the workflow can no longer fail and must complete. Every step before the pivot that changes state names its compensation slice, named for the action that undoes it. The pivot and the steps after it are retried until they succeed, and need no compensation. The workflow has a timeout started from `entrypoints/schedule/`.
 - A timeout works only from a recorded deadline. The step that starts the wait records the deadline, such as a deadline column or a scheduled-message record, in the same transaction as its state change. The timeout slice finds the overdue records through that deadline, acts only on records still waiting, and changes nothing when it runs twice. The plan's Workflows table names where the deadline is recorded.
 - Prefer events to synchronous calls for workflow steps. A step that needs a synchronous call records why in Slice Rule Exceptions.
 - When a context's CQRS decision is `separate read model`, each read model has a row in Read Models. A projection that updates it is a slice named `update_[read_model]`, listed in `entrypoints/queue/`, a query slice reads it through its own `repository`, and the plan says how the read model is rebuilt.

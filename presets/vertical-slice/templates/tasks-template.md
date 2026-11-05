@@ -66,7 +66,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T004 Setup database schema and migrations framework
 - [ ] T005 [P] Implement authentication/authorization framework
 - [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Set up the store connection and schema in [context]/infrastructure/ (no slice reads or writes)
+- [ ] T007 Set up the store connection in [context]/infrastructure/ (no tables yet: each slice adds the schema its tests need)
 - [ ] T008 Set up the outbox, its relay, and the inbox in [context]/infrastructure/ (only when the plan's Events table lists this context; blocks every slice that publishes or consumes)
 - [ ] T009 Configure error handling and logging infrastructure
 - [ ] T010 Setup environment configuration management
@@ -88,7 +88,9 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T011 [P] [US1] Contract test for [operation] in [context]/features/[slice_name]/
 - [ ] T012 [P] [US1] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
-### Implementation for User Story 1, one group per slice
+### Implementation for User Story 1
+
+<!-- One group per slice, each built outside-in: its contract when it crosses a context boundary, its failing tests, then the minimal code. -->
 
 #### Shared: [rule] (only when the plan's Shared Domain Rules lists it)
 
@@ -96,12 +98,13 @@ Examples of foundational tasks (adjust based on your project):
 
 #### Slice: [SliceName]
 
-- [ ] T014 [P] [US1] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
-- [ ] T015 [US1] Implement [slice] in [context]/features/[slice_name]/: entry, request, response, handler, event, and repository, and list it in the program that serves it, [context]/entrypoints/[trigger]/ (depends on T013, T014)
+- [ ] T014 [US1] Write the contract version [slice] needs in [context]/contracts/[contract-name]/[version]/ (only when it crosses a context boundary, and only what it needs)
+- [ ] T015 [US1] Write [slice] failing tests in [context]/features/[slice_name]/tests/ from its contract and the spec (they fail first)
+- [ ] T016 [US1] Implement [slice] in [context]/features/[slice_name]/: entry, request, response, handler, event, and repository, adding only the store schema changes its tests need in [context]/infrastructure/, and list it in the program that serves it, [context]/entrypoints/[trigger]/ (depends on T013, T014, T015)
 
 #### Slice: [SecondSliceName]
 
-- [ ] T016 [P] [US1] Write and then implement [second slice] in [context]/features/[second_slice_name]/ the same way, using the [rule] owner
+- [ ] T017 [P] [US1] Write and then implement [second slice] in [context]/features/[second_slice_name]/ the same way, using the [rule] owner
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -115,17 +118,19 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T017 [P] [US2] Contract test for [operation] in [context]/features/[slice_name]/
-- [ ] T018 [P] [US2] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
+- [ ] T018 [P] [US2] Contract test for [operation] in [context]/features/[slice_name]/
+- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
-### Implementation for User Story 2, one group per slice
+### Implementation for User Story 2
+
+<!-- One group per slice, each built outside-in: its contract when it crosses a context boundary, its failing tests, then the minimal code. -->
 
 #### Slice: [SliceName]
 
-- [ ] T019 [P] [US2] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
-- [ ] T020 [US2] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
-- [ ] T021 [US2] Use the existing owner in [context]/domain/ for any rule the plan's Shared Domain Rules lists
-- [ ] T022 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T020 [US2] Write [slice] failing tests in [context]/features/[slice_name]/tests/ from its contract and the spec, after its contract task when it crosses a context boundary (they fail first)
+- [ ] T021 [US2] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
+- [ ] T022 [US2] Use the existing owner in [context]/domain/ for any rule the plan's Shared Domain Rules lists
+- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -139,20 +144,22 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T023 [P] [US3] Contract test for [operation] in [context]/features/[slice_name]/
-- [ ] T024 [P] [US3] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
+- [ ] T024 [P] [US3] Contract test for [operation] in [context]/features/[slice_name]/
+- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
-### Implementation for User Story 3, one group per slice
+### Implementation for User Story 3
+
+<!-- One group per slice, each built outside-in: its contract when it crosses a context boundary, its failing tests, then the minimal code. -->
 
 #### Slice: [SliceName]
 
-- [ ] T025 [P] [US3] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
-- [ ] T026 [US3] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
+- [ ] T026 [US3] Write [slice] failing tests in [context]/features/[slice_name]/tests/ from its contract and the spec, after its contract task when it crosses a context boundary (they fail first)
+- [ ] T027 [US3] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
 
 #### Slice: [ConsumerSliceName] (only when the plan's Events table lists this context as a consumer)
 
-- [ ] T027 [P] [US3] Write [consumer slice] tests in [context]/features/[consumer_slice_name]/tests/, including a duplicate delivery that changes nothing (they fail first)
-- [ ] T028 [US3] Implement [consumer slice] in [context]/features/[consumer_slice_name]/: consume [EventName] v[N] from its contract, record its idempotency key in the inbox in the same transaction as its state change, publish any resulting event through the outbox, and list it in [context]/entrypoints/queue/
+- [ ] T028 [P] [US3] Write [consumer slice] tests in [context]/features/[consumer_slice_name]/tests/, including a duplicate delivery that changes nothing (they fail first)
+- [ ] T029 [US3] Implement [consumer slice] in [context]/features/[consumer_slice_name]/: consume [EventName] v[N] from its contract, record its idempotency key in the inbox in the same transaction as its state change, publish any resulting event through the outbox, and list it in [context]/entrypoints/queue/
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -196,7 +203,7 @@ Examples of foundational tasks (adjust based on your project):
 
 - Tests (if included) MUST be written and FAIL before implementation
 - Slices in the order of the plan's Slice Map, each finished and validated before the next
-- Within a slice: its tests, then one task that implements it, including its line in entrypoints/
+- Within a slice: its contract when it crosses a context boundary, then its failing tests, then one task that implements it, including only the store schema its tests need and its line in entrypoints/
 - Story complete before moving to next priority
 
 ### Parallel Opportunities
