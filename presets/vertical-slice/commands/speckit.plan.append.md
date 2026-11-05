@@ -22,19 +22,19 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 | Files in a slice's server side | Named by role in the stack's own style: `endpoint` (route, and the transport in and out), `handler` (the use case: validate, decide, call the repository), `request` and `response` (the slice's shapes), and `repository` (this slice's reads and writes of stored data). `repository` is always its own file. The other roles may share one file until the slice grows. Leave out a role the slice does not need |
 | `[context]/domain/` | Rules that two or more slices need for correctness, with their tests. Not data access, helpers, or request and response shapes |
 | `[context]/infrastructure/` | Store setup and other technical capabilities, with their tests: opening the store, the schema, transactions, the seed data files that load the store, the outbox, the inbox, the outbox relay code, and hosting. No business rules, and no reads or writes that belong to one slice |
-| `[context]/apps/[trigger]/` | One folder per deployed program, named by what starts it, such as `http` for incoming requests, `queue` for queued work, `schedule` for timed runs, and `cli` for operator commands, and the list is not closed. The name is never the context's name, which the context folder already says. Every context keeps this one level, even with one program. It holds only the entry point, Composition Root, routing or the job list, and the client host its slices share: no feature code and no business rules. Each program deploys as `[context]-[trigger]`, such as `orders-http` |
+| `[context]/apps/[trigger]/` | One folder per program, named in `snake_case` by what starts it, such as `http` for incoming requests, `queue` for queued work, `schedule` for timed runs, and `cli` for operator commands, and the list is not closed. The name is never the context's name, which the context folder already says. Every context keeps this one level, even with one program. It holds only the entry point, Composition Root, routing or the job list, and the client host its slices share: no feature code and no business rules. A program deploys as `[context]-[trigger]` in kebab-case, such as `order-management-http` for `order_management/apps/http/`, or is started by a host in `hosts/` |
 | `[context]/contracts/[contract-name]/[version]/` | The contract document for each published version of one contract, such as `orders-api/v2/openapi.yaml` or `order-placed/v1/asyncapi.yaml`, and nothing else: no tests, test cases, or scripts. Each contract is versioned on its own. A contract lives only with its provider; a repository-level index, if any, is generated. A contract's tests sit in the `tests/` folders of the slices that provide its operations |
 | `[context]/manifest.[ext]` | What the context declares to the platform, as the lasting record: its owner, its deployment unit, its programs, the store it owns, the types and events it publishes with the versions each supports, and the events it consumes with their versions |
-| `hosts/[host-name]/` | Only when contexts share one process: the entry point and wiring that start each context's `apps/[trigger]/` together. No feature code and no business rules. Each context keeps its own `apps/`, so moving it to its own service changes no context code |
+| `hosts/[host_name]/` | Only when contexts share one process: the entry point and wiring that start each context's `apps/[trigger]/` together. No feature code and no business rules. Each context keeps its own `apps/`, so moving it to its own service changes no context code |
 
 - No code sits at the context root: every source file goes in one of the places above. The root holds `manifest`, documentation, and files a stack or tool requires there.
 - Each slice reads and writes stored data in its own `repository`, over the store setup in `infrastructure/`. A read or write that two slices need for correctness belongs to `domain/` with one owner, never to a shared repository.
 - Adding a slice adds files. Shared code changes only to list the slice in `apps/`, in one line.
-- Two programs started the same way get names that differ and still say what starts them, such as `http-public` and `http-internal`.
+- Two programs started the same way get names that differ and still say what starts them, such as `http_public` and `http_internal`.
 - A program started in two ways is named for its main trigger, and the plan says what else starts it.
 - A portal shell served to browsers is named for incoming requests.
 - Each owner keeps its tests in its own `tests/` folder: `features/[slice_name]/tests/`, `domain/tests/`, `infrastructure/tests/`, and `apps/[trigger]/tests/`, so a slice still owns its tests and no test sits among the code. A stack that requires tests beside the code and leaves them out of its build keeps them there, such as Go's `_test.go` files. Tests that cross contexts sit in `tests/integration/`.
-- Slice folders use `snake_case` across the repository, such as `place_order`, because every stack can import it. Context folders use the same style.
+- Every folder that code imports uses `snake_case`: contexts, programs in `apps/`, hosts, slices, and `domain/` folders, such as `order_management`, `http_public`, and `place_order`, because every stack can import it. Names that leave the code use kebab-case: deployed services and programs, because Kubernetes and DNS names allow only lowercase letters, digits, and `-`, and contract folders, such as `order-placed`.
 - Name slices by kind:
 
   | Kind | Name | Example |
@@ -46,7 +46,7 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
   | Compensation | The action that undoes its step | `release_stock` for `reserve_stock` |
 
 - Name each event as a noun and a past-tense verb, such as `OrderPlaced`, and its contract folder the same in kebab-case, such as `contracts/order-placed/v1/`.
-- A context is a service of the same name when it deploys on its own. Never give a service a second name.
+- A context is a service of the same name, in kebab-case, when it deploys on its own: `order_management` deploys as `order-management`, and its programs as `order-management-http` and `order-management-queue`. Never give a service a second name.
 - Config is everything that is likely to vary between deploys, such as addresses, ports, file paths, and credentials. It is strictly separate from code and comes from environment variables.
 - Every value has one home, chosen by what it is:
 
@@ -82,7 +82,7 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 
 These rules apply when contexts deploy as separate services or exchange events. Fill the plan's Deployment Topology, Events, Workflows, and Read Models sections when they apply, and delete each one that does not.
 
-- Record each context's deployment unit in Bounded Contexts and in its `manifest`: `service` when it deploys on its own, or `module in <host>` when it shares a process in `hosts/[host-name]/`. A context stays in `[context]/` either way, so changing how it deploys changes data, not paths or imports.
+- Record each context's deployment unit in Bounded Contexts and in its `manifest`: `service` when it deploys on its own, or `module in [host_name]` when it shares a process in `hosts/[host_name]/`. A context stays in `[context]/` either way, so changing how it deploys changes data, not paths or imports.
 - A service is exactly one context. A context may deploy several programs, one per folder in `apps/`, but a service never spans two contexts.
 - Each context owns its store, recorded in its `manifest`. No other context reads or writes it. A context that needs another context's data calls its contract or keeps a local read model fed by its events.
 - Every event a context publishes is a versioned contract in its `contracts/[contract-name]/[version]/`, is listed in the publisher's and each consumer's `manifest`, has a row in Events and in Contracts Between Contexts, and is checked additive-only like any other contract.

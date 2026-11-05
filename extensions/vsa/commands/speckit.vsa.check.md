@@ -65,9 +65,10 @@ Check VSA-006 first. When the test command runs the boundary check and the check
   - a test outside its owner's `tests/` folder, unless its stack requires tests beside the code and leaves them out of its build;
   - a program folder in `apps/` whose name repeats its context's name, such as `orders/apps/orders/`, in the plan's Project Structure or in code;
   - a context placed anywhere other than `[context]/`, such as `services/orders/`;
-  - a service that spans two contexts, or a service named differently from its context;
+  - a service that spans two contexts, or a service or deployed program not named as its context, and its trigger, in kebab-case, such as `order-management-http` for `order_management/apps/http/`;
   - feature code or business rules in `hosts/`;
   - a contract document outside its provider's `contracts/[contract-name]/[version]/`, or one version folder that holds two contracts;
+  - a context, program, host, or `domain/` folder that is not `snake_case`, such as a hyphenated program folder in `apps/`;
   - and a slice folder that is not `snake_case`, does not follow the planning rules' name for its kind, or is named for its trigger, such as `on_order_placed`.
 
   A program folder named by what starts it, including a name outside the planning rules' examples, such as `stream/`, is not a finding. A Shared Domain Rules row that names fewer than two slices is a finding at the review after tasks, before any code is written.

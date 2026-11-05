@@ -25,7 +25,7 @@ The full wording of each rule lives in [`commands/speckit.vsa.check.md`](command
 
 | Rule | Checks | Severity |
 |---|---|---|
-| VSA-001 | Project Structure, context placement, and slice naming | Blocking |
+| VSA-001 | Project Structure, context placement, and folder and service naming | Blocking |
 | VSA-002 | Task order by technical layer | Blocking |
 | VSA-003 | Hidden reach between slices or contexts | Blocking |
 | VSA-004 | Duplicated domain rules | Warning |

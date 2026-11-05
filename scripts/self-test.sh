@@ -96,6 +96,10 @@ contracts/[version]
 [slice-name]
 place-order
 verb and a noun
+http-public
+http-internal
+[host-name]
+Deploys as [context]-[trigger]
 EOF
 
 echo "== Fresh project"

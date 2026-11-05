@@ -57,14 +57,17 @@ These parts fit the existing Project Structure with no new folders inside a cont
 - Consumers, projections, and workflow steps are slices listed in `apps/queue/`. Timeouts start from `apps/schedule/`.
 - Workflow state lives in `domain/[workflow_name]_workflow/`. The outbox, inbox, and relay code live in `infrastructure/`.
 - Each contract is versioned on its own, in its provider's `contracts/[contract-name]/[version]/`, such as `order-placed/v1/asyncapi.yaml`.
-- A context stays in `[context]/` however it deploys. Its `manifest` records its owner, deployment unit, programs, owned store, and the events it publishes and consumes. Contexts that share one process are started from `hosts/[host-name]/`, which holds only wiring.
+- A context stays in `[context]/` however it deploys. Its `manifest` records its owner, deployment unit, programs, owned store, and the events it publishes and consumes. Contexts that share one process are started from `hosts/[host_name]/`, which holds only wiring.
 
 ## Naming
 
 | Thing | Name | Example |
 |---|---|---|
-| Context, and the service when it deploys on its own | Domain noun, `snake_case` | `orders` |
-| Program and its deployable | Trigger, deployed as `[context]-[trigger]` | `apps/http/` → `orders-http` |
+| Context folder | Domain noun, `snake_case` | `order_management` |
+| Service, when the context deploys on its own | The context's name in kebab-case | `order-management` |
+| Program folder | Trigger, `snake_case` | `apps/http/`, `apps/http_public/` |
+| Deployed program | `[context]-[trigger]` in kebab-case | `order-management-http` |
+| Host folder | `snake_case` | `hosts/back_office/` |
 | Command or consumer slice | `verb_noun`, for what it does, never its trigger | `place_order`, `reserve_stock` |
 | Query slice | `get_noun` or `list_nouns` | `list_my_orders` |
 | Projection slice | `update_[read_model]` | `update_order_summary` |
@@ -72,7 +75,7 @@ These parts fit the existing Project Structure with no new folders inside a cont
 | Workflow state | `[workflow_name]_workflow` in `domain/` | `domain/checkout_workflow/` |
 | Event | Noun and past-tense verb, contract folder in kebab-case | `OrderPlaced` → `contracts/order-placed/v1/` |
 
-`snake_case` is the one folder style every stack can import: hyphens are not importable in Python or legal in Java packages.
+Folders that code imports are `snake_case`, the one style every stack can import: hyphens are not importable in Python or legal in Java packages. Names that leave the code are kebab-case: Kubernetes and DNS names allow only lowercase letters, digits, and `-`.
 
 This support is part of this preset, not a separate one. Spec-Kit does not merge templates: the preset with the lowest priority number replaces `plan-template` entirely, so a second preset would have to copy and maintain the whole template.
 
