@@ -17,14 +17,15 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 
 | Place | Holds |
 |---|---|
-| `[context]/features/[slice-name]/` | Everything one request needs, from the client to the stored data: its shapes, validation, handling, data access, and tests. Name the slice as a verb and a noun |
-| `[context]/features/[slice-name]/client/` and `server/` | The two sides of a slice, in a project with a client. The slice's tests for both sides sit in its `tests/` folder. A slice has one or both. In a project with no client, these subfolders do not exist |
+| `[context]/features/[slice_name]/` | Everything one request needs, from the client to the stored data: its shapes, validation, handling, data access, and tests. Name the slice `verb_noun` in snake_case, for what it does, never for what triggers it: `reserve_stock`, not `on_order_placed` |
+| `[context]/features/[slice_name]/client/` and `server/` | The two sides of a slice, in a project with a client. The slice's tests for both sides sit in its `tests/` folder. A slice has one or both. In a project with no client, these subfolders do not exist |
 | Files in a slice's server side | Named by role in the stack's own style: `endpoint` (route, and the transport in and out), `handler` (the use case: validate, decide, call the repository), `request` and `response` (the slice's shapes), and `repository` (this slice's reads and writes of stored data). `repository` is always its own file. The other roles may share one file until the slice grows. Leave out a role the slice does not need |
 | `[context]/domain/` | Rules that two or more slices need for correctness, with their tests. Not data access, helpers, or request and response shapes |
-| `[context]/infrastructure/` | Store setup and other technical capabilities, with their tests: opening the store, the schema, transactions, the seed data files that load the store, and hosting. No business rules, and no reads or writes that belong to one slice |
-| `[context]/apps/[trigger]/` | One folder per deployed program, named by what starts it, such as `http` for incoming requests, `queue` for queued work, `schedule` for timed runs, and `cli` for operator commands, and the list is not closed. The name is never the context's name, which the context folder already says. Every context keeps this one level, even with one program. It holds only the entry point, Composition Root, routing or the job list, and the client host its slices share: no feature code and no business rules |
-| `[context]/contracts/[version]/` | The contract document for each published version, such as `openapi.yaml` for an HTTP API, and nothing else: no tests, test cases, or scripts. A contract's tests sit in the `tests/` folders of the slices that provide its operations |
-| `[context]/manifest.[ext]` | What the context declares to the platform: its types and the versions each supports |
+| `[context]/infrastructure/` | Store setup and other technical capabilities, with their tests: opening the store, the schema, transactions, the seed data files that load the store, the outbox, the inbox, the outbox relay code, and hosting. No business rules, and no reads or writes that belong to one slice |
+| `[context]/apps/[trigger]/` | One folder per deployed program, named by what starts it, such as `http` for incoming requests, `queue` for queued work, `schedule` for timed runs, and `cli` for operator commands, and the list is not closed. The name is never the context's name, which the context folder already says. Every context keeps this one level, even with one program. It holds only the entry point, Composition Root, routing or the job list, and the client host its slices share: no feature code and no business rules. Each program deploys as `[context]-[trigger]`, such as `orders-http` |
+| `[context]/contracts/[contract-name]/[version]/` | The contract document for each published version of one contract, such as `orders-api/v2/openapi.yaml` or `order-placed/v1/asyncapi.yaml`, and nothing else: no tests, test cases, or scripts. Each contract is versioned on its own. A contract lives only with its provider; a repository-level index, if any, is generated. A contract's tests sit in the `tests/` folders of the slices that provide its operations |
+| `[context]/manifest.[ext]` | What the context declares to the platform, as the lasting record: its owner, its deployment unit, its programs, the store it owns, the types and events it publishes with the versions each supports, and the events it consumes with their versions |
+| `hosts/[host-name]/` | Only when contexts share one process: the entry point and wiring that start each context's `apps/[trigger]/` together. No feature code and no business rules. Each context keeps its own `apps/`, so moving it to its own service changes no context code |
 
 - No code sits at the context root: every source file goes in one of the places above. The root holds `manifest`, documentation, and files a stack or tool requires there.
 - Each slice reads and writes stored data in its own `repository`, over the store setup in `infrastructure/`. A read or write that two slices need for correctness belongs to `domain/` with one owner, never to a shared repository.
@@ -32,8 +33,20 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 - Two programs started the same way get names that differ and still say what starts them, such as `http-public` and `http-internal`.
 - A program started in two ways is named for its main trigger, and the plan says what else starts it.
 - A portal shell served to browsers is named for incoming requests.
-- Each owner keeps its tests in its own `tests/` folder: `features/[slice-name]/tests/`, `domain/tests/`, `infrastructure/tests/`, and `apps/[trigger]/tests/`, so a slice still owns its tests and no test sits among the code. A stack that requires tests beside the code and leaves them out of its build keeps them there, such as Go's `_test.go` files. Tests that cross contexts sit in `tests/integration/`.
-- Slice folders use one naming style across the repository, chosen so that every stack can import them.
+- Each owner keeps its tests in its own `tests/` folder: `features/[slice_name]/tests/`, `domain/tests/`, `infrastructure/tests/`, and `apps/[trigger]/tests/`, so a slice still owns its tests and no test sits among the code. A stack that requires tests beside the code and leaves them out of its build keeps them there, such as Go's `_test.go` files. Tests that cross contexts sit in `tests/integration/`.
+- Slice folders use `snake_case` across the repository, such as `place_order`, because every stack can import it. Context folders use the same style.
+- Name slices by kind:
+
+  | Kind | Name | Example |
+  |---|---|---|
+  | Command or event consumer | `verb_noun`, for what it does | `place_order`, `reserve_stock` |
+  | Query | `get_noun` or `list_nouns` | `get_order_status`, `list_my_orders` |
+  | Projection | `update_[read_model]` | `update_order_summary` |
+  | Workflow step | `verb_noun`, for what it does | `confirm_order` |
+  | Compensation | The action that undoes its step | `release_stock` for `reserve_stock` |
+
+- Name each event as a noun and a past-tense verb, such as `OrderPlaced`, and its contract folder the same in kebab-case, such as `contracts/order-placed/v1/`.
+- A context is a service of the same name when it deploys on its own. Never give a service a second name.
 - Config is everything that is likely to vary between deploys, such as addresses, ports, file paths, and credentials. It is strictly separate from code and comes from environment variables.
 - Every value has one home, chosen by what it is:
 
@@ -47,11 +60,11 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 
 - A value is data whenever someone outside the code needs to read or change it. Only the last row stays in code.
 - A program in `apps/` may supply a default for local runs, and never a credential.
-- `manifest` is a data file, never code. It lists each type the context publishes and the versions it supports, and each version's contract document says what that version adds. Registration, request checks, and response shaping read them. A client takes the version it uses from the provider's published list. Adding a version that only adds fields adds a contract document, changes `manifest` and the slices that use the new field, and changes no version check.
+- `manifest` is a data file, never code. It records the context's owner, deployment unit, programs, and owned store, the events it consumes with their versions, and each type and event the context publishes with the versions it supports, and each version's contract document says what that version adds. Registration, request checks, and response shaping read them. A client takes the version it uses from the provider's published list. Adding a version that only adds fields adds a contract document, changes `manifest` and the slices that use the new field, and changes no version check.
 
 ### Boundary check
 
-- The plan names one static dependency check for each stack, using the stack's established checker, with its configuration in the repository. Examples: Import Linter for Python, dependency-cruiser for JavaScript and TypeScript, Packwerk for Ruby. Its rules: a slice does not import another slice; a context imports another context only through a named contract; `domain/` and `infrastructure/` never import `features/`; only `apps/` imports slices; and only a slice's `repository` and `infrastructure/` import the store's access library.
+- The plan names one static dependency check for each stack, using the stack's established checker, with its configuration in the repository. Examples: Import Linter for Python, dependency-cruiser for JavaScript and TypeScript, Packwerk for Ruby. Its rules: a slice does not import another slice; a context imports another context only through a named contract; `domain/` and `infrastructure/` never import `features/`; only `apps/` imports slices; `hosts/` imports only each context's `apps/`; and only a slice's `repository` and `infrastructure/` import the store's access library.
 - Where a context publishes versioned contracts, lint every contract document and check that each newer version only adds to the one before. Examples for OpenAPI: Spectral for lint, and oasdiff's breaking-change check for the additive rule.
 - The project's one test command runs the boundary check, the contract checks, and every context's tests. It fails when a check finds a problem, when a check's tool is missing, or when a check or a context's tests found nothing to check.
 - Every deployed artifact, such as a container image or a package, leaves out every `tests/` folder and test file, by one rule the plan names for each stack. Example: `**/tests/` in `.dockerignore`. The test command lists the files in each artifact it builds and fails when one holds a test file.
@@ -64,3 +77,21 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 - Record one CQRS decision per context. The default is `same store`: separate read and write code over one store. Anything else needs a reason.
 - Set UI reach for each slice by ownership, not by stack. When one team owns the whole path, the slice is `includes client`, whatever the stacks. When another team owns the client, the slice is `ends at contract`, and the plan names a linked client feature slice, owned by that team, that interacts only through that contract.
 - A screen that needs data from several slices is its own read slice in the owning context, or a client feature slice when another team owns it. It does not reach into other slices' internals.
+
+### Services, events, and workflows
+
+These rules apply when contexts deploy as separate services or exchange events. Fill the plan's Deployment Topology, Events, Workflows, and Read Models sections when they apply, and delete each one that does not.
+
+- Record each context's deployment unit in Bounded Contexts and in its `manifest`: `service` when it deploys on its own, or `module in <host>` when it shares a process in `hosts/[host-name]/`. A context stays in `[context]/` either way, so changing how it deploys changes data, not paths or imports.
+- A service is exactly one context. A context may deploy several programs, one per folder in `apps/`, but a service never spans two contexts.
+- Each context owns its store, recorded in its `manifest`. No other context reads or writes it. A context that needs another context's data calls its contract or keeps a local read model fed by its events.
+- Every event a context publishes is a versioned contract in its `contracts/[contract-name]/[version]/`, is listed in the publisher's and each consumer's `manifest`, has a row in Events and in Contracts Between Contexts, and is checked additive-only like any other contract.
+- A slice that publishes an event writes it to the outbox in the same transaction as the state change. The outbox, the relay code, and the inbox live in `infrastructure/`. The relay runs as a line in `apps/queue/`, or as its own program in `apps/outbox/` when it must run alone.
+- An event consumer is a slice, listed in `apps/queue/`. It names its idempotency key in Events, and the inbox makes a duplicate delivery change nothing.
+- A business process that spans contexts has a row in Workflows. Its state and transitions live in the owner context's `domain/[workflow_name]_workflow/`. Each step is a slice. Every step that changes state names its compensation slice, named for the action that undoes it, and the workflow has a timeout started from `apps/schedule/`.
+- Prefer events to synchronous calls for workflow steps. A step that needs a synchronous call records why in Slice Rule Exceptions.
+- When a context's CQRS decision is `separate read model`, each read model has a row in Read Models. A projection that updates it is a slice named `update_[read_model]`, listed in `apps/queue/`, a query slice reads it through its own `repository`, and the plan says how the read model is rebuilt.
+
+### Exceptions
+
+- Record every accepted exception to these rules in the plan's Slice Rule Exceptions table, with the rule, the location, and the reason. Use Complexity Tracking only for Constitution Check violations.

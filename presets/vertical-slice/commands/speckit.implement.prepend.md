@@ -12,7 +12,8 @@ These rules take precedence over any later instruction that describes work by te
 - Contexts interact only through their named contracts.
 - Run the test command after every slice, not only at the end. A failure is fixed before the next slice starts.
 - Put every value in the home the plan's value table gives it. Read config from environment variables. Declare every limit, pattern, enum, and error code a client sees in the contract document, and have code read it or a contract test prove the match. Keep business data such as roles and policies in the store. Only internal values that no client sees and no deploy changes stay in code, each named and defined once. A client takes the version it uses from the provider's published list. Tests and contract examples may name values.
-- This command is not finished while the review after it reports a blocking finding: fix each one, or record a justified exception in the plan's Complexity Tracking table, and run the review again.
+- Never read or write another context's store. Publish each event through the outbox in the same transaction as the state change, from the schema in the publisher's `contracts/[contract-name]/[version]/`. Make each consumer check its idempotency key through the inbox, so a duplicate delivery changes nothing. Give each workflow step that changes state its compensation, as the plan's Workflows table names it.
+- When the vsa check is installed, this command is not finished while the review after it reports a blocking finding: fix each one, or record a justified exception in the plan's Slice Rule Exceptions table, and run the review again.
 - Before reporting done, stop everything the run started outside the test command, such as containers, servers, and background processes.
 
 <!-- vertical-slice:implement-rules-end -->

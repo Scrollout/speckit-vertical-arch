@@ -23,7 +23,8 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- Paths follow the plan's Project Structure: `[context]/features/[slice-name]/` for a slice, `[context]/domain/` for a shared rule, `[context]/infrastructure/` for store setup
+- Paths follow the plan's Project Structure: `[context]/features/[slice_name]/` for a slice, `[context]/domain/` for a shared rule, `[context]/infrastructure/` for store setup
+- Slice folders are `snake_case` and named for what they do (`reserve_stock`, `list_my_orders`, `update_order_summary`), never for what triggers them
 
 <!--
   ============================================================================
@@ -66,8 +67,9 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T005 [P] Implement authentication/authorization framework
 - [ ] T006 [P] Setup API routing and middleware structure
 - [ ] T007 Set up the store connection and schema in [context]/infrastructure/ (no slice reads or writes)
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T008 Set up the outbox, its relay, and the inbox in [context]/infrastructure/ (only when the plan's Events table lists this context; blocks every slice that publishes or consumes)
+- [ ] T009 Configure error handling and logging infrastructure
+- [ ] T010 Setup environment configuration management
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -83,25 +85,23 @@ Examples of foundational tasks (adjust based on your project):
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in [context]/features/[slice-name]/
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
+- [ ] T011 [P] [US1] Contract test for [endpoint] in [context]/features/[slice_name]/
+- [ ] T012 [P] [US1] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
 ### Implementation for User Story 1, one group per slice
 
 #### Shared: [rule] (only when the plan's Shared Domain Rules lists it)
 
-- [ ] T012 [US1] Build [rule] once in its owner in [context]/domain/, with its tests, before the slices that use it
+- [ ] T013 [US1] Build [rule] once in its owner in [context]/domain/, with its tests, before the slices that use it
 
 #### Slice: [SliceName]
 
-- [ ] T013 [P] [US1] Write [slice] unit tests in [context]/features/[slice-name]/ (they fail first)
-- [ ] T014 [US1] Implement [slice] in [context]/features/[slice-name]/: request, response, handler, endpoint, and repository, and list it in the program that serves it, [context]/apps/[trigger]/ (depends on T012, T013)
+- [ ] T014 [P] [US1] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
+- [ ] T015 [US1] Implement [slice] in [context]/features/[slice_name]/: request, response, handler, endpoint, and repository, and list it in the program that serves it, [context]/apps/[trigger]/ (depends on T013, T014)
 
 #### Slice: [SecondSliceName]
 
-- [ ] T015 [P] [US1] Write and then implement [second slice] in [context]/features/[second-slice-name]/ the same way, using the [rule] owner
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T016 [P] [US1] Write and then implement [second slice] in [context]/features/[second_slice_name]/ the same way, using the [rule] owner
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -115,17 +115,17 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in [context]/features/[slice-name]/
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
+- [ ] T017 [P] [US2] Contract test for [endpoint] in [context]/features/[slice_name]/
+- [ ] T018 [P] [US2] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
 ### Implementation for User Story 2, one group per slice
 
 #### Slice: [SliceName]
 
-- [ ] T020 [P] [US2] Write [slice] unit tests in [context]/features/[slice-name]/ (they fail first)
-- [ ] T021 [US2] Implement [slice] in [context]/features/[slice-name]/, and list it in [context]/apps/[trigger]/
-- [ ] T022 [US2] Use the existing owner in [context]/domain/ for any rule the plan's Shared Domain Rules lists
-- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T019 [P] [US2] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
+- [ ] T020 [US2] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/apps/[trigger]/
+- [ ] T021 [US2] Use the existing owner in [context]/domain/ for any rule the plan's Shared Domain Rules lists
+- [ ] T022 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -139,15 +139,20 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in [context]/features/[slice-name]/
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
+- [ ] T023 [P] [US3] Contract test for [endpoint] in [context]/features/[slice_name]/
+- [ ] T024 [P] [US3] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
 ### Implementation for User Story 3, one group per slice
 
 #### Slice: [SliceName]
 
-- [ ] T026 [P] [US3] Write [slice] unit tests in [context]/features/[slice-name]/ (they fail first)
-- [ ] T027 [US3] Implement [slice] in [context]/features/[slice-name]/, and list it in [context]/apps/[trigger]/
+- [ ] T025 [P] [US3] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
+- [ ] T026 [US3] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/apps/[trigger]/
+
+#### Slice: [ConsumerSliceName] (only when the plan's Events table lists this context as a consumer)
+
+- [ ] T027 [P] [US3] Write [consumer slice] tests in [context]/features/[consumer_slice_name]/tests/, including a duplicate delivery that changes nothing (they fail first)
+- [ ] T028 [US3] Implement [consumer slice] in [context]/features/[consumer_slice_name]/: consume [EventName] v[N] from its contract, check its idempotency key through the inbox, publish any resulting event through the outbox, and list it in [context]/apps/queue/
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -164,7 +169,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
+- [ ] TXXX [P] Additional unit tests (if requested) in each owner's tests/ folder
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 
@@ -209,12 +214,12 @@ Examples of foundational tasks (adjust based on your project):
 
 ```bash
 # Launch all tests for User Story 1 together (if tests requested):
-Task: "Contract test for [endpoint] in [context]/features/[slice-name]/"
+Task: "Contract test for [endpoint] in [context]/features/[slice_name]/"
 Task: "Integration test for [user journey] in tests/integration/"
 
 # Launch independent slices for User Story 1 together:
-Task: "Implement [SliceA] in [context]/features/[slice-a]/"
-Task: "Implement [SliceB] in [context]/features/[slice-b]/"
+Task: "Implement [SliceA] in [context]/features/[slice_a]/"
+Task: "Implement [SliceB] in [context]/features/[slice_b]/"
 ```
 
 ---

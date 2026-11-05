@@ -1,0 +1,21 @@
+name: self-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  self-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        speckit_ref: [v1.2.5]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Run self-test against Spec-Kit ${{ matrix.speckit_ref }}
+        env:
+          SPECKIT_REF: ${{ matrix.speckit_ref }}
+        run: scripts/self-test.sh

@@ -51,11 +51,15 @@
   A context is a boundary of domain language, data, and ownership. A language or a screen does not
   create one, so one context may list several stacks.
   Use "unassigned" for an unknown owner.
+  CQRS decision is "same store" (default) or "separate read model", which needs a reason and a Read Models row.
+  Deployment unit is "service" when the context deploys on its own, as a service named for the context,
+  or "module in <host>" when it shares a process in hosts/<host>/. A service never spans two contexts.
+  Record it in the context's manifest too; the manifest is the lasting record.
 -->
 
-| Context | Owner | Stack | CQRS decision |
-|---|---|---|---|
-| [Context] | [Team or unassigned] | [Stack or stacks] | Same store (default) |
+| Context | Owner | Stack | CQRS decision | Deployment unit |
+|---|---|---|---|---|
+| [Context] | [Team or unassigned] | [Stack or stacks] | Same store (default) | [service, or module in <host>] |
 
 ## Slice Map
 
@@ -88,6 +92,60 @@
 |---|---|---|---|
 | [contract-name] | [Context] | [Context or client] | [API, event, or schema] |
 
+## Deployment Topology
+
+<!--
+  Delete this section unless contexts deploy as separate services.
+  One row per context deployed as a service. The service has the context's name, and each program deploys as
+  <context>-<trigger>, such as orders-http. The service owns its store, and no other context reads or writes it.
+  These rows mirror each context's manifest. When this feature changes them, it changes the manifest too.
+-->
+
+| Service (= context) | Programs → deployables | Store (owned) | Scales independently |
+|---|---|---|---|
+| [context] | [http → [context]-http, queue → [context]-queue] | [Store, owned by this context only] | [Yes or No] |
+
+## Events
+
+<!--
+  Delete this section unless contexts exchange events.
+  Name each event as a noun and a past-tense verb, such as OrderPlaced, because it records a fact.
+  Its contract folder uses the same name in kebab-case, such as contracts/order-placed/v1/.
+  Every event is also a row in Contracts Between Contexts, with kind "event", and in the publisher's
+  and consumers' manifests.
+  Published via is "outbox" unless Slice Rule Exceptions records a reason.
+-->
+
+| Event | Version | Publisher | Consumers | Published via | Consumer idempotency key |
+|---|---|---|---|---|---|
+| [NounPastTense, such as OrderPlaced] | v1 | [Context] | [Context, Context] | outbox | [Field or fields] |
+
+## Workflows
+
+<!--
+  Delete this section unless a business process spans contexts.
+  Every step that changes state has a compensation, and every workflow has a timeout.
+  The workflow's state lives in the owner's domain/[workflow_name]_workflow/. Each step and each
+  compensation is a slice named for what it does, and a compensation is named for the action that undoes
+  its step, such as release_stock for reserve_stock.
+-->
+
+| Workflow | Owner context | Steps (event → slice) | Compensation per step | Timeout |
+|---|---|---|---|---|
+| [workflow_name] | [Context] | [EventA → slice_a, EventB → slice_b] | [slice_a: undo_slice_a, slice_b: undo_slice_b] | [Duration and the slice it starts] |
+
+## Read Models
+
+<!--
+  Delete this section unless a context's CQRS decision is "separate read model".
+  The projection slice that writes a read model is named update_[read_model]. Query slices that read it are
+  named get_[noun] or list_[nouns].
+-->
+
+| Read model | Context | Fed by events | Served by slice | Rebuild |
+|---|---|---|---|---|
+| [read_model] | [Context] | [EventA, EventB] → update_[read_model] | [get_ or list_ slice] | [How it is rebuilt from events or the write store] |
+
 ## Existing Code
 
 <!-- Delete this section unless the feature touches a project with layered code. Do not plan to restructure existing code. -->
@@ -118,34 +176,58 @@ specs/[###-feature]/
 -->
 
 ```text
-[context]/
-├── manifest.[ext]       # What the context declares to the platform: types and their versions
-├── contracts/[version]/ # Contract document for each published version, and nothing else
+[context]/               # One fixed place per context, however it deploys; also the service name
+├── manifest.[ext]       # What the context declares: owner, deployment unit, programs, owned store,
+│                        #   published types and events with versions, consumed events with versions
+├── contracts/
+│   └── [contract-name]/
+│       └── [version]/   # One contract document per published version, such as openapi.yaml or
+│                        #   asyncapi.yaml, and nothing else. Each contract is versioned on its own
 ├── apps/[trigger]/      # One deployed program, named by what starts it (http, queue, schedule, cli), never the context's name:
-│                        #   entry point, wiring, routing, shared client host
-├── infrastructure/      # Store setup (open, schema, transactions, seed data) and hosting. No slice queries
-├── domain/              # Rules two or more slices need for correctness
+│                        #   entry point, wiring, routing, shared client host. Deploys as [context]-[trigger]
+├── infrastructure/      # Store setup (open, schema, transactions, seed data), outbox, inbox, relay code, and hosting. No slice queries
+├── domain/              # Rules two or more slices need for correctness, and workflow state in [workflow_name]_workflow/
 ├── features/
-│   └── [slice-name]/
+│   └── [slice_name]/    # verb_noun in snake_case, named for what it does, never for what triggers it
 │       ├── server/      # Role-named files: endpoint, handler,
 │       │                #   request, response (may share one file); repository always its own file
 │       ├── client/      # The slice's client, when UI reach is includes client
 │       └── tests/       # The slice's tests, never shipped
 └── [files a stack requires at the root]
 
-contracts/               # Only when contexts or teams interact
+hosts/[host-name]/       # Only when contexts share one process: entry point and wiring that start each
+                         #   context's apps/[trigger]/. No feature code, no business rules
 tests/integration/       # Tests that cross contexts or run the whole system
 ```
+
+<!--
+  Services, events, and workflows use the same shape:
+  - An event consumer, a projection, and a workflow step are each a slice in features/, listed in apps/queue/.
+  - A timeout is apps/schedule/ starting a slice.
+  - The outbox relay runs as a line in apps/queue/, or as its own program in apps/outbox/ when it must run alone.
+  - A contract lives only in its provider's contracts/[contract-name]/[version]/. A repository-level index of
+    contracts, if any, is generated, never edited.
+-->
 
 **Structure Decision**: [Document the selected structure and reference the real
 directories captured above]
 
 ## Complexity Tracking
 
-> **Fill ONLY if Constitution Check has violations that must be justified, or to record an accepted exception to a slice rule**
+> **Fill ONLY if Constitution Check has violations that must be justified**
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
-| [e.g., shared helper in another slice] | [specific problem] | [why a shared owner is insufficient] |
+
+### Slice Rule Exceptions
+
+<!--
+  One row per accepted vertical slice finding. The vsa check matches an exception on Rule and Location.
+  Delete the sample row, and write None when there are no exceptions.
+-->
+
+| Rule | Location | Reason |
+|---|---|---|
+| [VSA-00N] | [Path or slice] | [Why the rule cannot be met here, and why a shared owner or contract is insufficient] |

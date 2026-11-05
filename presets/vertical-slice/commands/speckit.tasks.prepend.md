@@ -7,7 +7,7 @@ These rules take precedence over any later instruction in this command that orga
 - Load the plan's Slice Map, Shared Domain Rules, and Contracts Between Contexts. Organize tasks by user story and then by slice.
 - Each story phase includes its goal and independent test criteria and keeps the template's `### Tests for User Story N` and `### Implementation for User Story N` sections. Under the implementation section, it has one `#### Slice: <name>` group for each slice from the plan's Slice Map, and `#### Shared: <rule>` groups where needed.
 - Give each slice the fewest tasks that keep it test-first: one task that writes its tests and one that implements it, including its `repository` and its line in `apps/`. Add a task to a slice only for work that can run in parallel or is checked on its own, such as a contract document.
-- Every implementation task sits under one `Slice` or `Shared` heading, and its path shows the slice. Every task path follows the plan's Project Structure.
+- Every implementation task sits under one `Slice` or `Shared` heading, and its path shows the slice. Every task path follows the plan's Project Structure, and every slice folder follows the plan's naming rules, such as `reserve_stock`, `list_my_orders`, or `update_order_summary`. When a task changes what a context publishes, consumes, deploys, or owns, it also updates that context's `manifest`.
 - Keep each slice's request, response, and view models and its tests in that slice. Slice models belong to their slice.
 - Map each interface contract to the slice that provides it and the slices that consume it. When tests are requested, each operation of a contract gets a contract test in the `tests/` folder of the slice that provides it, never in `contracts/`.
 - A slice marked `includes client` keeps its client tasks in its own `#### Slice:` group. A client feature slice exists only when another team owns the client. It has its own group and depends on the contract, not on server internals.
@@ -15,13 +15,14 @@ These rules take precedence over any later instruction in this command that orga
 - A slice used by several stories is built under the earliest story, and later stories reference it.
 - Setup (Phase 1) holds project initialization. Foundational (Phase 2) holds only work that blocks every slice, and each task states why. Shared entities do not go there by default. Project wiring, test tools, and other work that is not a domain rule goes in Setup when every slice needs it, and otherwise in the first slice that needs it. Never use a `Shared` group for it. Do not rebuild a Foundational phase inside the first story.
 - The final phase, Polish, is for work that belongs to no single slice.
-- This command is not finished while the review after it reports a blocking finding: fix each one in `tasks.md` or the plan, or record a justified exception in the plan's Complexity Tracking table, and run the review again.
+- When the plan has Events, Workflows, or Read Models rows: put the outbox and inbox setup in Foundational for each context that publishes or consumes, and give each event consumer, workflow step, compensation, and projection its own `#### Slice:` group. A consumer's tests include a duplicate delivery that changes nothing. A workflow step's tests include its compensation.
+- When the vsa check is installed, this command is not finished while the review after it reports a blocking finding: fix each one in `tasks.md` or the plan, or record a justified exception in the plan's Slice Rule Exceptions table, and run the review again.
 - Tasks follow the behavior being delivered, never a sequence of technical layers. When tests are requested, a slice's tests come first. The first slice must be deliverable and testable without any later slice. Each slice is a complete, independently testable increment.
 
 Examples of correctly formatted tasks under these rules:
 
 - `- [ ] T005 Configure request logging in orders/infrastructure/logging.py (blocks every slice because all slices log through it)`
-- `- [ ] T012 [P] [US1] Write acceptance test in orders/features/place-order/tests/test_place_order.py`
-- `- [ ] T014 [US1] Implement the place order behavior in orders/features/place-order/handler.py`
+- `- [ ] T012 [P] [US1] Write acceptance test in orders/features/place_order/tests/test_place_order.py`
+- `- [ ] T014 [US1] Implement the place order behavior in orders/features/place_order/handler.py`
 
 <!-- vertical-slice:tasks-rules-end -->

@@ -23,3 +23,16 @@ specify extension add --dev <path-to>/extensions/vsa
 specify extension remove vsa
 specify preset remove vertical-slice
 ```
+
+## Self-test
+
+`scripts/self-test.sh` installs the preset and the extension into a throwaway Spec-Kit project and checks:
+
+- The preset and extension versions match each other's supported ranges, and every declared file exists.
+- The core text each override takes precedence over still exists in core.
+- The preset installs without vsa, since vsa is optional.
+- Every overridden command is delivered with its marker, and every template resolves to the preset.
+- Both vsa hooks are registered.
+- Removal leaves no markers.
+
+It runs Spec-Kit `v1.2.5` through `uvx` by default. Set `SPECKIT_REF` to test another tag, or `SPECIFY=specify` to use an installed CLI. CI runs it on every push and pull request.

@@ -1,0 +1,5 @@
+# Development files only. Never list preset.yml or a file that preset.yml declares.
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
