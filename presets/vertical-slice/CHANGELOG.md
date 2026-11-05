@@ -22,6 +22,15 @@
 - Slice folder placeholders and examples use `snake_case`, such as `place_order`, replacing `place-order`, which Python and Java cannot import.
 - The boundary check also requires that `hosts/` imports only each context's `apps/`.
 - Program folders in `apps/` use `snake_case`, such as `http_public`, replacing `http-public`, because hosts import them.
+- Renamed `apps/` to `entrypoints/`, a slice's `server/` to `backend/` and `client/` to `frontend/`, UI reach `includes client` to `includes frontend`, and Client feature slice to Frontend feature slice. A slice's `frontend/` is its user interface, never an API client for other contexts.
+- The backend role `endpoint` is now `entry`, for any trigger, and a new `event` role maps a change to a published event's schema. `handler`, `event`, and `repository` are each their own file.
+- A slice with both sides splits its tests into `tests/backend/` and `tests/frontend/`, so no folder mixes stacks.
+- An event's contract folder holds its message schema (`schema.json`, `.avsc`, or `.proto`). A context that uses AsyncAPI keeps one AsyncAPI document for all its events, because an AsyncAPI document describes one application.
+- A consumer records its idempotency key in the inbox in the same transaction as its state change. The Events table names the relay: polling, from `entrypoints/queue/` or `entrypoints/outbox/`, or log tailing.
+- Deployed names are at most 63 characters, start with a letter, and end with a letter or digit, as Kubernetes Service names require.
+- A package or namespace may follow its stack's style where the stack lets it differ from the folder, such as Go's `package placeorder` in `place_order/`.
+- `manifest` no longer lists programs. The `entrypoints/` folders are the list.
+- Frontend names shared in the browser are prefixed with the context's kebab-case name.
 - The Project Structure tree shows the `tests/` folders of `apps/`, `infrastructure/`, and `domain/`, which the rules already required.
 
 - Accepted slice-rule exceptions move from Complexity Tracking to Slice Rule Exceptions. Complexity Tracking keeps Constitution Check violations only.

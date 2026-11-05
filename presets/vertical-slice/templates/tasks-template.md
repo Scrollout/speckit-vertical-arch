@@ -85,7 +85,7 @@ Examples of foundational tasks (adjust based on your project):
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T011 [P] [US1] Contract test for [endpoint] in [context]/features/[slice_name]/
+- [ ] T011 [P] [US1] Contract test for [operation] in [context]/features/[slice_name]/
 - [ ] T012 [P] [US1] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
 ### Implementation for User Story 1, one group per slice
@@ -97,7 +97,7 @@ Examples of foundational tasks (adjust based on your project):
 #### Slice: [SliceName]
 
 - [ ] T014 [P] [US1] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
-- [ ] T015 [US1] Implement [slice] in [context]/features/[slice_name]/: request, response, handler, endpoint, and repository, and list it in the program that serves it, [context]/apps/[trigger]/ (depends on T013, T014)
+- [ ] T015 [US1] Implement [slice] in [context]/features/[slice_name]/: entry, request, response, handler, event, and repository, and list it in the program that serves it, [context]/entrypoints/[trigger]/ (depends on T013, T014)
 
 #### Slice: [SecondSliceName]
 
@@ -115,7 +115,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T017 [P] [US2] Contract test for [endpoint] in [context]/features/[slice_name]/
+- [ ] T017 [P] [US2] Contract test for [operation] in [context]/features/[slice_name]/
 - [ ] T018 [P] [US2] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
 ### Implementation for User Story 2, one group per slice
@@ -123,7 +123,7 @@ Examples of foundational tasks (adjust based on your project):
 #### Slice: [SliceName]
 
 - [ ] T019 [P] [US2] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
-- [ ] T020 [US2] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/apps/[trigger]/
+- [ ] T020 [US2] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
 - [ ] T021 [US2] Use the existing owner in [context]/domain/ for any rule the plan's Shared Domain Rules lists
 - [ ] T022 [US2] Integrate with User Story 1 components (if needed)
 
@@ -139,7 +139,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T023 [P] [US3] Contract test for [endpoint] in [context]/features/[slice_name]/
+- [ ] T023 [P] [US3] Contract test for [operation] in [context]/features/[slice_name]/
 - [ ] T024 [P] [US3] Integration test for [user journey] in tests/integration/ (when it crosses contexts or runs the whole system; otherwise beside its slice)
 
 ### Implementation for User Story 3, one group per slice
@@ -147,12 +147,12 @@ Examples of foundational tasks (adjust based on your project):
 #### Slice: [SliceName]
 
 - [ ] T025 [P] [US3] Write [slice] unit tests in [context]/features/[slice_name]/ (they fail first)
-- [ ] T026 [US3] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/apps/[trigger]/
+- [ ] T026 [US3] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
 
 #### Slice: [ConsumerSliceName] (only when the plan's Events table lists this context as a consumer)
 
 - [ ] T027 [P] [US3] Write [consumer slice] tests in [context]/features/[consumer_slice_name]/tests/, including a duplicate delivery that changes nothing (they fail first)
-- [ ] T028 [US3] Implement [consumer slice] in [context]/features/[consumer_slice_name]/: consume [EventName] v[N] from its contract, check its idempotency key through the inbox, publish any resulting event through the outbox, and list it in [context]/apps/queue/
+- [ ] T028 [US3] Implement [consumer slice] in [context]/features/[consumer_slice_name]/: consume [EventName] v[N] from its contract, record its idempotency key in the inbox in the same transaction as its state change, publish any resulting event through the outbox, and list it in [context]/entrypoints/queue/
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -196,7 +196,7 @@ Examples of foundational tasks (adjust based on your project):
 
 - Tests (if included) MUST be written and FAIL before implementation
 - Slices in the order of the plan's Slice Map, each finished and validated before the next
-- Within a slice: its tests, then one task that implements it, including its line in apps/
+- Within a slice: its tests, then one task that implements it, including its line in entrypoints/
 - Story complete before moving to next priority
 
 ### Parallel Opportunities
@@ -214,7 +214,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ```bash
 # Launch all tests for User Story 1 together (if tests requested):
-Task: "Contract test for [endpoint] in [context]/features/[slice_name]/"
+Task: "Contract test for [operation] in [context]/features/[slice_name]/"
 Task: "Integration test for [user journey] in tests/integration/"
 
 # Launch independent slices for User Story 1 together:

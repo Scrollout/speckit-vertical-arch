@@ -25,14 +25,14 @@ The full wording of each rule lives in [`commands/speckit.vsa.check.md`](command
 
 | Rule | Checks | Severity |
 |---|---|---|
-| VSA-001 | Project Structure, context placement, and folder and service naming | Blocking |
+| VSA-001 | Project Structure, context placement, slice roles, contract layout, and folder, service, and frontend naming | Blocking |
 | VSA-002 | Task order by technical layer | Blocking |
 | VSA-003 | Hidden reach between slices or contexts | Blocking |
 | VSA-004 | Duplicated domain rules | Warning |
 | VSA-005 | Values outside their home | Blocking |
 | VSA-006 | Test command, boundary check, and contract checks | Blocking |
 | VSA-007 | Store shared between contexts | Blocking |
-| VSA-008 | Event outbox and consumer idempotency | Blocking |
+| VSA-008 | Event outbox, relay, and consumer idempotency in one transaction | Blocking |
 | VSA-009 | Workflow compensations and timeouts | Blocking |
 | VSA-010 | Events missing from the plan, their contract, or a manifest, and event naming | Blocking |
 

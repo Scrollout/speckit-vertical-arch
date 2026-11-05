@@ -47,7 +47,7 @@
 ## Bounded Contexts
 
 <!--
-  List every context this feature touches, including client contexts owned by another team.
+  List every context this feature touches, including frontend contexts owned by another team.
   A context is a boundary of domain language, data, and ownership. A language or a screen does not
   create one, so one context may list several stacks.
   Use "unassigned" for an unknown owner.
@@ -66,13 +66,13 @@
 <!--
   One row per slice. A slice is one command or query. In a library or command-line tool,
   a slice is one behavior a caller can invoke. Every user story must appear at least once.
-  UI reach is one of: includes client, ends at contract, no UI.
-  Set UI reach by ownership, not by stack. Use "includes client" when one team owns the whole path,
+  UI reach is one of: includes frontend, ends at contract, no UI.
+  Set UI reach by ownership, not by stack. Use "includes frontend" when one team owns the whole path,
   even across stacks. Use "ends at contract" when another team
-  owns the client.
+  owns the frontend.
 -->
 
-| Slice | Kind | Stories | Context | UI reach | Client feature slice | Contract |
+| Slice | Kind | Stories | Context | UI reach | Frontend feature slice | Contract |
 |---|---|---|---|---|---|---|
 | [SliceName] | command | US1 | [Context] | [UI reach] | [Name or None] | [Name or None] |
 
@@ -86,19 +86,21 @@
 
 ## Contracts Between Contexts
 
-<!-- Every interaction between contexts names a contract. Write None for one context and no client boundary. -->
+<!-- Every interaction between contexts names a contract. Write None for one context and no frontend boundary. -->
 
 | Contract | Provider | Consumers | Kind |
 |---|---|---|---|
-| [contract-name] | [Context] | [Context or client] | [API, event, or schema] |
+| [contract-name] | [Context] | [Context or frontend] | [API, event, or schema] |
 
 ## Deployment Topology
 
 <!--
   Delete this section unless contexts deploy as separate services.
   One row per context deployed as a service. The service has the context's name in kebab-case, and each program
-  deploys as [context]-[trigger] in kebab-case, such as order-management-http for order_management/apps/http/. The service owns its store, and no other context reads or writes it.
-  These rows mirror each context's manifest. When this feature changes them, it changes the manifest too.
+  deploys as [context]-[trigger] in kebab-case, such as order-management-http for order_management/entrypoints/http/. The service owns its store, and no other context reads or writes it.
+  Programs come from the context's entrypoints/ folders. The store and deployment unit mirror the context's
+  manifest: when this feature changes them, it changes the manifest too. Deployed names are at most 63
+  characters, start with a letter, and end with a letter or digit.
 -->
 
 | Service (= context) | Programs → deployables | Store (owned) | Scales independently |
@@ -110,15 +112,19 @@
 <!--
   Delete this section unless contexts exchange events.
   Name each event as a noun and a past-tense verb, such as OrderPlaced, because it records a fact.
-  Its contract folder uses the same name in kebab-case, such as contracts/order-placed/v1/.
+  Its contract folder uses the same name in kebab-case, such as contracts/order-placed/v1/, and holds the
+  event's message schema. A context that uses AsyncAPI keeps one asyncapi.yaml for all its events, as its own
+  contract, such as contracts/order-management-events/v1/, that references those schemas.
   Every event is also a row in Contracts Between Contexts, with kind "event", and in the publisher's
   and consumers' manifests.
-  Published via is "outbox" unless Slice Rule Exceptions records a reason.
+  Published via is "outbox" unless Slice Rule Exceptions records a reason. Name the relay: polling, run from
+  entrypoints/queue/ or entrypoints/outbox/, or log tailing, an external connector named here.
+  A consumer records its idempotency key in the inbox in the same transaction as its state change.
 -->
 
-| Event | Version | Publisher | Consumers | Published via | Consumer idempotency key |
-|---|---|---|---|---|---|
-| [NounPastTense, such as OrderPlaced] | v1 | [Context] | [Context, Context] | outbox | [Field or fields] |
+| Event | Version | Publisher | Consumers | Published via | Relay | Consumer idempotency key |
+|---|---|---|---|---|---|---|
+| [NounPastTense, such as OrderPlaced] | v1 | [Context] | [Context, Context] | outbox | [polling or log tailing] | [Field or fields] |
 
 ## Workflows
 
@@ -170,24 +176,28 @@ specs/[###-feature]/
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout for this feature.
   Use the planning rules' Project Structure: every context has this shape, and every file has one
-  place. Delete the parts a context does not need. In a project with no client, a slice has no
-  client/ or server/ subfolders. A framework's required folder may appear inside a slice or at a
-  project boundary. Name each program folder in apps/ by what starts it, never by the context's name.
+  place. Delete the parts a context does not need. In a project with no frontend, a slice has no
+  frontend/ or backend/ subfolders. A framework's required folder may appear inside a slice or at a
+  project boundary. Name each program folder in entrypoints/ by what starts it, never by the context's name.
   Folders that code imports are snake_case; deployed names and contract folders are kebab-case.
+  A package or namespace may follow its stack's style where the stack lets it differ from the folder,
+  such as package placeorder in Go or OrderManagement.Features.PlaceOrder in C#.
 -->
 
 ```text
-[context]/                    # One fixed place per context, however it deploys, in snake_case
-├── manifest.[ext]            # What the context declares: owner, deployment unit, programs, owned store,
-│                             #   published types and events with versions, consumed events with versions
+[context]/                    # One fixed place per context, however it deploys, in snake_case, starting with a letter
+├── manifest.[ext]            # What the context declares: owner, deployment unit, owned store, published types
+│                             #   and events with versions, consumed events with versions
 ├── contracts/
 │   └── [contract-name]/
-│       └── [version]/        # One contract document per published version, such as openapi.yaml or
-│                             #   asyncapi.yaml, and nothing else. Each contract is versioned on its own
-├── apps/
+│       └── [version]/        # One contract document per published version, and nothing else: openapi.yaml for
+│                             #   an API, a message schema (schema.json, .avsc, .proto) for one event, or one
+│                             #   asyncapi.yaml for the context's events. Each contract is versioned on its own
+├── entrypoints/
 │   └── [trigger]/            # One program, named in snake_case by what starts it (http, queue, schedule, cli),
-│       │                     #   never by the context's name: entry point, wiring, routing, shared client host.
-│       │                     #   Deployed as [context]-[trigger] in kebab-case, or started by a host in hosts/
+│       │                     #   never by the context's name: entry point, wiring, routing, shared frontend host.
+│       │                     #   Deployed as [context]-[trigger] in kebab-case (at most 63 characters), or
+│       │                     #   started by a host in hosts/. The folders are the list of programs
 │       └── tests/            # The program's tests, never shipped
 ├── infrastructure/           # Store setup (open, schema, transactions, seed data), outbox, inbox, relay code,
 │   │                         #   and hosting. No slice queries
@@ -197,24 +207,29 @@ specs/[###-feature]/
 │   └── tests/
 ├── features/
 │   └── [slice_name]/         # verb_noun in snake_case, named for what it does, never for what triggers it
-│       ├── server/           # Role-named files: endpoint, handler, request, response (may share one file);
-│       │                     #   repository always its own file
-│       ├── client/           # The slice's client, when UI reach is includes client
+│       ├── backend/          # Role-named files in the stack's style; leave out roles the slice does not need:
+│       │                     #   entry (how its trigger reaches it), handler, request, response, event (maps a
+│       │                     #   change to a published event's schema), and repository. entry, request, and
+│       │                     #   response may share one file; handler, event, and repository never do
+│       ├── frontend/         # The slice's user interface, when UI reach is includes frontend. Never an API
+│       │                     #   client for other contexts: they use the contract
 │       └── tests/            # The slice's tests, never shipped
+│           ├── backend/      #   one folder per side when the slice has both, so no folder mixes stacks
+│           └── frontend/
 └── [files a stack requires at the root]
 
 hosts/
 └── [host_name]/              # Only when contexts share one process: the entry point and wiring that start
-                              #   each context's apps/[trigger]/. No feature code, no business rules
+                              #   each context's entrypoints/[trigger]/. No feature code, no business rules
 tests/
 └── integration/              # Tests that cross contexts or run the whole system
 ```
 
 <!--
   Services, events, and workflows use the same shape:
-  - An event consumer, a projection, and a workflow step are each a slice in features/, listed in apps/queue/.
-  - A timeout is apps/schedule/ starting a slice.
-  - The outbox relay runs as a line in apps/queue/, or as its own program in apps/outbox/ when it must run alone.
+  - An event consumer, a projection, and a workflow step are each a slice in features/, listed in entrypoints/queue/.
+  - A timeout is entrypoints/schedule/ starting a slice.
+  - The outbox relay runs as a line in entrypoints/queue/, or as its own program in entrypoints/outbox/ when it must run alone.
   - A contract lives only in its provider's contracts/[contract-name]/[version]/. A repository-level index of
     contracts, if any, is generated, never edited.
 -->

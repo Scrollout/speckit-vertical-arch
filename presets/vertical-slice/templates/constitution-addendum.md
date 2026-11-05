@@ -6,7 +6,7 @@ Place this section after Core Principles and before Governance, and adapt it to 
 
 These principles add to Core Principles and replace none of them. Fill the core principle slots as you would without this section, and keep any core principle the user asks to adopt. If a core principle seems to conflict with a principle here, keep both and apply the core principle at context level. For example, a library-first principle means each context is a library.
 
-- **Context, then slice**: Code MUST be organized by bounded context and then by feature slice. Every context MUST use the Project Structure, so every file has one place. Technical-layer folders MUST NOT be the primary structure. A language or a client MUST NOT create a context on its own.
+- **Context, then slice**: Code MUST be organized by bounded context and then by feature slice. Every context MUST use the Project Structure, so every file has one place. Technical-layer folders MUST NOT be the primary structure. A language or a frontend MUST NOT create a context on its own.
 - **Slices own shapes**: Each slice owns its request, response, and view models and its tests.
 - **Single owner for rules**: A domain rule used by several slices MUST have one owner and MUST NOT be duplicated.
 - **Contracts between contexts**: Contexts MUST interact only through named shared contracts.
@@ -14,4 +14,4 @@ These principles add to Core Principles and replace none of them. Fill the core 
 - **CQRS per context**: Each context MUST record its own decision, defaulting to separate read and write code over one store.
 - **One context, one service**: A context MUST stay in one fixed folder however it deploys. When it deploys on its own, it MUST be one service with the context's name, and a service MUST NOT span contexts. Each context MUST own its store, and no other context MAY read or write it. Its `manifest` MUST record its owner, deployment, store, and the events it publishes and consumes.
 - **Names say what things do**: Slices MUST be named for what they do, never for what triggers them. Events MUST be named as a noun and a past-tense verb.
-- **Reliable events**: A published event MUST be a versioned contract written through an outbox in the same transaction as the state change. A consumer MUST be idempotent. A process that spans contexts MUST name a compensation for every step that changes state, and a timeout.
+- **Reliable events**: A published event MUST be a versioned contract written through an outbox in the same transaction as the state change. A consumer MUST be idempotent, recording each message's key in the same transaction as its state change. A process that spans contexts MUST name a compensation for every step that changes state, and a timeout.

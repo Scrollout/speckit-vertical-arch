@@ -100,6 +100,14 @@ http-public
 http-internal
 [host-name]
 Deploys as [context]-[trigger]
+apps/
+client/
+server/
+includes client
+Client feature slice
+`endpoint`
+order-placed/v1/asyncapi
+server side
 EOF
 
 echo "== Fresh project"

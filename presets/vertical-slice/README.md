@@ -54,10 +54,10 @@ The plan template has four optional sections. Each is deleted unless it applies,
 
 These parts fit the existing Project Structure with no new folders inside a context:
 
-- Consumers, projections, and workflow steps are slices listed in `apps/queue/`. Timeouts start from `apps/schedule/`.
+- Consumers, projections, and workflow steps are slices listed in `entrypoints/queue/`. The outbox relay is polling, run from `entrypoints/queue/` or `entrypoints/outbox/`, or log tailing, an external connector the plan names. Consumers record their idempotency key in the inbox in the same transaction as their state change. Timeouts start from `entrypoints/schedule/`.
 - Workflow state lives in `domain/[workflow_name]_workflow/`. The outbox, inbox, and relay code live in `infrastructure/`.
-- Each contract is versioned on its own, in its provider's `contracts/[contract-name]/[version]/`, such as `order-placed/v1/asyncapi.yaml`.
-- A context stays in `[context]/` however it deploys. Its `manifest` records its owner, deployment unit, programs, owned store, and the events it publishes and consumes. Contexts that share one process are started from `hosts/[host_name]/`, which holds only wiring.
+- Each contract is versioned on its own, in its provider's `contracts/[contract-name]/[version]/`, such as `order-placed/v1/schema.json` for one event's message schema. A context that uses AsyncAPI keeps one AsyncAPI document for all its events, such as `order-management-events/v1/asyncapi.yaml`.
+- A context stays in `[context]/` however it deploys. Its `manifest` records its owner, deployment unit, owned store, and the events it publishes and consumes. Contexts that share one process are started from `hosts/[host_name]/`, which holds only wiring.
 
 ## Naming
 
@@ -65,15 +65,18 @@ These parts fit the existing Project Structure with no new folders inside a cont
 |---|---|---|
 | Context folder | Domain noun, `snake_case` | `order_management` |
 | Service, when the context deploys on its own | The context's name in kebab-case | `order-management` |
-| Program folder | Trigger, `snake_case` | `apps/http/`, `apps/http_public/` |
-| Deployed program | `[context]-[trigger]` in kebab-case | `order-management-http` |
+| Program folder | Trigger, `snake_case` | `entrypoints/http/`, `entrypoints/http_public/` |
+| Deployed program | `[context]-[trigger]` in kebab-case, at most 63 characters, starting with a letter | `order-management-http` |
 | Host folder | `snake_case` | `hosts/back_office/` |
 | Command or consumer slice | `verb_noun`, for what it does, never its trigger | `place_order`, `reserve_stock` |
 | Query slice | `get_noun` or `list_nouns` | `list_my_orders` |
 | Projection slice | `update_[read_model]` | `update_order_summary` |
 | Compensation slice | The action that undoes its step | `release_stock` |
 | Workflow state | `[workflow_name]_workflow` in `domain/` | `domain/checkout_workflow/` |
-| Event | Noun and past-tense verb, contract folder in kebab-case | `OrderPlaced` → `contracts/order-placed/v1/` |
+| Event | Noun and past-tense verb, contract folder in kebab-case holding its message schema | `OrderPlaced` → `contracts/order-placed/v1/schema.json` |
+| Package or namespace | The stack's style, where the stack lets it differ from the folder | Go `package placeorder`, C# `OrderManagement.Features.PlaceOrder` |
+| Frontend names in the browser | Prefixed with the context's kebab-case name | `order-management-cart`, `order-management:order-placed` |
+| Backend files in a slice | By role: `entry`, `handler`, `request`, `response`, `event`, `repository` | `place_order/backend/handler.py` |
 
 Folders that code imports are `snake_case`, the one style every stack can import: hyphens are not importable in Python or legal in Java packages. Names that leave the code are kebab-case: Kubernetes and DNS names allow only lowercase letters, digits, and `-`.
 
