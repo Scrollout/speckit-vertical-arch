@@ -131,14 +131,16 @@
 <!--
   Delete this section unless a business process spans contexts.
   Every step that changes state has a compensation, and every workflow has a timeout.
+  The timeout needs a recorded deadline: name where the step that starts the wait records it, in the same
+  transaction, such as a deadline column. The timeout slice finds overdue records through it.
   The workflow's state lives in the owner's domain/[workflow_name]_workflow/. Each step and each
   compensation is a slice named for what it does, and a compensation is named for the action that undoes
   its step, such as release_stock for reserve_stock.
 -->
 
-| Workflow | Owner context | Steps (event → slice) | Compensation per step | Timeout |
-|---|---|---|---|---|
-| [workflow_name] | [Context] | [EventA → slice_a, EventB → slice_b] | [slice_a: undo_slice_a, slice_b: undo_slice_b] | [Duration and the slice it starts] |
+| Workflow | Owner context | Steps (event → slice) | Compensation per step | Timeout | Deadline recorded in |
+|---|---|---|---|---|---|
+| [workflow_name] | [Context] | [EventA → slice_a, EventB → slice_b] | [slice_a: undo_slice_a, slice_b: undo_slice_b] | [Duration and the slice it starts] | [Where, and by which slice, such as orders.deadline by place_order] |
 
 ## Read Models
 

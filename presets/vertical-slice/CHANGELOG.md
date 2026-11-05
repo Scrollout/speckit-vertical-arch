@@ -19,6 +19,9 @@
 
 ### Changed
 
+- Workflow timeouts need a recorded deadline, written in the same transaction as the step that starts the wait; the timeout slice finds overdue records through it, acts only on records still waiting, and is idempotent. The Workflows table names where the deadline is recorded.
+- Event type names and queue handler keys are published facts: named once, in the slice's `event` file or the queue program, and proven equal to the manifest by a test.
+
 - The plan template has Values and Boundary Check sections, which the rules and the vsa check already referred to.
 - The boundary check expresses "only a slice's repository and infrastructure import the store library" by forbidding whole packages and exempting `*.repository` by pattern, with wildcards for every per-slice rule, so new files and slices are covered without edits.
 - Similar data access in two slices' repositories is not a shared rule: each slice keeps its own repository, and only a rule that decides correctness moves to `domain/`.

@@ -15,6 +15,9 @@
 
 ### Changed
 
+- VSA-009 also checks the timeout's recorded deadline, that the timeout slice finds overdue records through it, and that a second run changes nothing.
+- VSA-005 states when event type names and handler keys in code are allowed: named once and proven equal to the manifest by a test.
+
 - The report's first column is the rule ID (`VSA-00N`), one row per finding, replacing an ambiguous ID column.
 - VSA-004 does not report similar data access in two slices' repositories, only a duplicated rule that decides correctness.
 
