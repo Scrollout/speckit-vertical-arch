@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.22.0
+
+### Added
+
+- A rule in `domain/` that guards state several slices change has an owner that holds that state and its transitions, its aggregate. Slices change that state only through the owner, loading and saving it through their own `repository`, and one transaction changes one owner's state with its outbox and inbox rows.
+- Shared Domain Rules gains a Guards state column.
+- Requires vsa `>=0.16.0,<0.17.0`.
+
+### Changed
+
+- Constitution: Single owner for rules covers guarded state; Values have one home says a value is not a domain type.
+- The `handler` role decides, or has the state's owner in `domain/` decide.
+- Refactor moves the object that holds guarded state with its rule.
+
 ## 0.21.0
 
 ### Added

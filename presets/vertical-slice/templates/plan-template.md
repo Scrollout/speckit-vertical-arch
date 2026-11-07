@@ -78,11 +78,16 @@
 
 ## Shared Domain Rules
 
-<!-- A rule goes here only when two or more slices use it. Write None when no rule is shared. -->
+<!--
+  A rule goes here only when two or more slices use it. Write None when no rule is shared.
+  When the rule guards state that several slices change, such as which status changes an order allows, name that
+  state. Its owner then holds that state and its transitions, Used by lists every slice that changes it, and
+  those slices change it only through the owner. Write None in Guards state otherwise.
+-->
 
-| Rule | Owner | Used by |
-|---|---|---|
-| [Rule] | [One location] | [SliceA, SliceB] |
+| Rule | Owner | Guards state | Used by |
+|---|---|---|---|
+| [Rule] | [One location] | [State, or None] | [SliceA, SliceB] |
 
 ## Contracts Between Contexts
 

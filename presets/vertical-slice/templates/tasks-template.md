@@ -94,7 +94,7 @@ Examples of foundational tasks (adjust based on your project):
 
 #### Shared: [rule] (only when the plan's Shared Domain Rules lists it)
 
-- [ ] T013 [US1] Build [rule] once in its owner in [context]/domain/, with its tests, before the slices that use it
+- [ ] T013 [US1] Build [rule] once in its owner in [context]/domain/, with its tests, before the slices that use it. When it guards state, the owner holds that state and its transitions
 
 #### Slice: [SliceName]
 

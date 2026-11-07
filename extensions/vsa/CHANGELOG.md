@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.16.0
+
+### Added
+
+- VSA-013: guarded state changed by a slice without going through its owner, or two owners' state changed in one transaction.
+
+### Changed
+
+- Supports vertical-slice 0.22.x.
+
 ## 0.15.0
 
 ### Added

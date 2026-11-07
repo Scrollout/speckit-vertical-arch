@@ -22,10 +22,10 @@ This command is read-only. Do not change any artifact or code. Report only what 
    The vsa check needs the vertical-slice preset, which is not active in this project.
    ```
 
-2. Read the `version` of the `vertical-slice` entry. This check supports `>=0.21.0` and `<0.22.0`. If the version is outside that range, print the report with status `NOT RUN` and this message, then stop:
+2. Read the `version` of the `vertical-slice` entry. This check supports `>=0.22.0` and `<0.23.0`. If the version is outside that range, print the report with status `NOT RUN` and this message, then stop:
 
    ```text
-   The vsa check supports vertical-slice 0.21.x, but this project has <version>. Install matching versions of the preset and the extension.
+   The vsa check supports vertical-slice 0.22.x, but this project has <version>. Install matching versions of the preset and the extension.
    ```
 
 3. Read `feature_directory` from `.specify/feature.json`. If the file is missing, or the directory does not exist, print the report with status `NOT RUN`, say that no current feature could be found, then stop.
@@ -68,6 +68,7 @@ Find the evidence by progressive distributed disclosure. Start from the cheapest
 | VSA-010 | An event published or consumed that is missing from the plan's Events table, its versioned contract, or a manifest, or that is not named in the past tense | Blocking |
 | VSA-011 | A task or code that acts on a decision in Open Decisions, below 85% confidence, with no confidence, or with no deciding source in `research.md` Sources | Blocking |
 | VSA-012 | A check, threshold, test expectation, or report rule that the feature weakened without a reason in Slice Rule Exceptions | Blocking |
+| VSA-013 | State that a rule in `domain/` guards, changed by a slice without going through that rule's owner, or one transaction that changes more than one owner's state | Blocking |
 
 Check VSA-006 first. When the test command runs the boundary check and the check covers every planning rule, a direct import is that check's job, and the review does not repeat it. The judgment rules are read in full whatever the checks report.
 
@@ -105,6 +106,7 @@ Check VSA-006 first. When the test command runs the boundary check and the check
 - VSA-009: for each row in the plan's Workflows table, check that it names its pivot, that every step before the pivot that changes state names a compensation slice that exists (the pivot and later steps need none), and that the timeout is started from `entrypoints/schedule/`. Check that the deadline the Workflows table names is recorded in the same transaction as the step that starts the wait, that the timeout slice finds overdue records through it and acts only on records still waiting, and that a second run changes nothing.
 - VSA-011: compare each task and the code it names with the plan's Decisions and Open Decisions tables and `research.md` Sources. Report work that depends on an open decision, a decision below 85% or with no confidence, and a decision whose deciding source is missing or does not support it.
 - VSA-012: compare each check's configuration, the test command, test expectations, and the report rules with the merge base. Report a removed or loosened check, a raised threshold, a widened ignore list, an assertion removed or weakened, or a failure turned into a pass, unless Slice Rule Exceptions records the reason.
+- VSA-013: for each Shared Domain Rules row that names guarded state, find every slice that writes that state, from the plan's Slice Map, the tasks, the slices' repositories, and the store schema. A slice that writes it without loading the owner and asking it to make the change is a finding, such as a repository that updates a status column the owner guards. So is a slice that changes the state but is missing from the row's Used by column, and a transaction that changes two owners' state when Slice Rule Exceptions records no reason. Outbox and inbox rows in the same transaction are not a second owner, and a slice that only reads guarded state is not a finding. At the review after tasks, before code exists, a task that changes guarded state without using the owner is a finding.
 - VSA-010: compare every event the code publishes or consumes with the plan's Events table, the publisher's `contracts/[contract-name]/[version]/`, and the publisher's and consumer's `manifest`. An event missing from any of them is a finding, and so is an event name that is not a noun and a past-tense verb.
 
 ## 6. Exceptions

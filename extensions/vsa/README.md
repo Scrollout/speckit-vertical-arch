@@ -5,7 +5,7 @@ Adds `speckit.vsa.check`, which checks a feature's artifacts and code against th
 ## Requirements
 
 - Spec-Kit 1.2.5 or later.
-- The `vertical-slice` preset, version 0.21.x. An extension manifest cannot require a preset, so the check tests for it when it runs and reports `NOT RUN` if it's missing, disabled, or a different version.
+- The `vertical-slice` preset, version 0.22.x. An extension manifest cannot require a preset, so the check tests for it when it runs and reports `NOT RUN` if it's missing, disabled, or a different version.
 
 ## Install and remove
 
@@ -37,6 +37,7 @@ The full wording of each rule lives in [`commands/speckit.vsa.check.md`](command
 | VSA-010 | Events missing from the plan, their contract, or a manifest, and event naming | Blocking |
 | VSA-011 | Work acting on an open, low-confidence, or unsourced decision | Blocking |
 | VSA-012 | A check, threshold, or test expectation weakened without a recorded reason | Blocking |
+| VSA-013 | Guarded state changed around its owner, or two owners changed in one transaction | Blocking |
 
 VSA-007 to VSA-010 run only when the plan or the code has services, events, or workflows.
 

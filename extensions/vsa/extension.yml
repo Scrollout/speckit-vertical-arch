@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: vsa
   name: "Vertical Slice Check"
-  version: "0.15.0"
+  version: "0.16.0"
   description: "Checks a feature's artifacts and code against the vertical slice rules. Requires the vertical-slice preset."
   category: "process"
   effect: "read-only"
