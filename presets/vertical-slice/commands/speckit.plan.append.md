@@ -36,7 +36,7 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 - Build outside-in, test-first:
   1. **Skeleton**: context folders, `manifest`, and the test command with every check proven to fail. No feature code.
   2. **Contract**: for a slice that crosses a context boundary, write only the contract version that slice needs: its API operation or its event schema.
-  3. **Red**: write the slice's failing tests from the contract and the spec, the contract test first. When tests are not requested, write its acceptance criteria instead.
+  3. **Red**: write the slice's failing tests from the contract and the spec, the contract test first. When tests are not requested, write its acceptance criteria instead. A fresh sub-agent writes them from only the spec, the contract, and the slice's plan rows. When git is available, they are committed before any code, as the slice's Red point, and the commit message names the test author.
   4. **Green**: write the minimal code that passes, including only the store schema changes this slice's tests need, in `infrastructure/`.
   5. **Refactor**: move a rule to `domain/` only when a second slice needs it. When the rule guards state, move the object that holds that state and its transitions with it.
 

@@ -9,6 +9,7 @@
 ### Changed
 
 - VSA-004 also warns about a value rule checked outside its domain type, checked in more than one place, or with no type that enforces it.
+- VSA-012 also compares each slice's tests with its Red point.
 - Supports vertical-slice 0.22.x.
 
 ## 0.15.0

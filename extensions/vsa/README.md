@@ -36,7 +36,7 @@ The full wording of each rule lives in [`commands/speckit.vsa.check.md`](command
 | VSA-009 | Workflow compensations and timeouts | Blocking |
 | VSA-010 | Events missing from the plan, their contract, or a manifest, and event naming | Blocking |
 | VSA-011 | Work acting on an open, low-confidence, or unsourced decision | Blocking |
-| VSA-012 | A check, threshold, or test expectation weakened without a recorded reason | Blocking |
+| VSA-012 | A check, threshold, or test expectation weakened since the merge base or a slice's Red point, without a recorded reason | Blocking |
 | VSA-013 | Guarded state changed around its owner, or two owners changed in one transaction | Blocking |
 
 VSA-007 to VSA-010 run only when the plan or the code has services, events, or workflows.

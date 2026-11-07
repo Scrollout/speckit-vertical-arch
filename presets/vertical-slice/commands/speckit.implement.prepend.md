@@ -4,7 +4,7 @@
 
 These rules take precedence over any later instruction that describes work by technical layer, such as "models, services" or "core development".
 
-- Build outside-in, test-first: the skeleton first, then for each slice its contract (only what it needs), its failing tests, and the minimal code that passes them, adding only the store schema changes those tests need. Never build a contract, a store schema, or a shared model ahead of the slice that needs it.
+- Build outside-in, test-first: the skeleton first, then for each slice its contract (only what it needs), its failing tests, written as the Red step says, and the minimal code that passes them, adding only the store schema changes those tests need. Never build a contract, a store schema, or a shared model ahead of the slice that needs it.
 - Build one slice at a time, in the order in `tasks.md`. Finish a slice and pass its validation before starting the next one.
 - A check that did not run, or found nothing to check, is a failure, never a pass. Make the project's one test command run the plan's boundary check, its contract checks, and every context's tests, and exit non-zero when any of them finds a problem, is missing, or found nothing to check. It also fails when an artifact it builds holds a test file.
 - Put every file in the place the plan's Project Structure gives it. Keep each slice's request, response, and view models in that slice, and its tests in the slice's `tests/` folder. A stack that requires tests beside the code and leaves them out of its build keeps them there.

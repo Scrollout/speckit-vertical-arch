@@ -19,5 +19,5 @@ These principles add to Core Principles and replace none of them. Fill the core 
 - **Evidence before action**: Decisions MUST be found by progressive distributed disclosure and recorded with their deciding source. Work MUST act only on decisions at 85% confidence or higher; the rest stay open.
 - **Checks prove they can fail**: Every check MUST find its targets from the folders, report what it examined, pass on clean code, and fail on a planted violation. Retired names MUST be guarded.
 - **Fix the cause**: A failing check MUST be resolved by fixing whichever of the code or the check is wrong, never by weakening the check.
-- **Fresh review**: The author MUST NOT review its own work when a fresh reviewer is available.
+- **Fresh review**: The author MUST NOT review its own work, or write the tests that judge it, when a fresh agent is available.
 - **Reliable events**: A published event MUST be a versioned contract written through an outbox in the same transaction as the state change. A consumer MUST be idempotent, recording each message's key in the same transaction as its state change. A process that spans contexts MUST name its pivot, a compensation for every step before the pivot that changes state, and a timeout.

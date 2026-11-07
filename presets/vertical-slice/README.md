@@ -93,7 +93,7 @@ These rules apply to every project:
 | Checks prove they can fail | Every check finds its targets from the folders, reports what it examined, passes on clean code, and fails on a planted violation |
 | Retired terms are guarded | Renamed or removed names, paths, and patterns are listed in a data file, and the test command fails when one returns |
 | Fix the cause | A failing check is resolved by fixing whichever of the code or the check is wrong, never by weakening the check |
-| Fresh review | The vsa check runs in a fresh sub-agent when the agent supports one, and otherwise in the same session, reported as such |
+| Fresh review | The vsa check runs in a fresh sub-agent, and a fresh sub-agent writes each slice's failing tests, when the agent supports one; otherwise the same session, reported as such |
 
 ## Exceptions
 
