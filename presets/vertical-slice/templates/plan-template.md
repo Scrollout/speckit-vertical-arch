@@ -193,20 +193,20 @@
 
 <!--
   One row per decision the feature depends on, from research.md. Confidence rests on the deciding source or a
-  test, never on assumption. Act only on decisions at 85% or higher. Move every other decision to Open Decisions.
+  test, never on assumption. Act only on decisions at 90% or higher. Move every other decision to Open Decisions.
 -->
 
 | Decision | Confidence | Deciding source |
 |---|---|---|
-| [What was decided] | [85–100%] | [File, URL, or test, as recorded in research.md Sources] |
+| [What was decided] | [90–100%] | [File, URL, or test, as recorded in research.md Sources] |
 
 ## Open Decisions
 
-<!-- Decisions below 85%, or without a deciding source. No task or code acts on them. Write None when there are none. -->
+<!-- Decisions below 90%, or without a deciding source. No task or code acts on them. Write None when there are none. -->
 
 | Decision | Confidence | What would settle it |
 |---|---|---|
-| [Open question] | [Below 85%, or unknown] | [Source to check, test to run, or person to ask] |
+| [Open question] | [Below 90%, or unknown] | [Source to check, test to run, or person to ask] |
 
 ## Existing Code
 

@@ -89,7 +89,7 @@ These rules apply to every project:
 | Rule | What it requires |
 |---|---|
 | Progressive distributed disclosure | Research maps the sources by their cheapest signal, opens the most promising, re-ranks after each step, follows links to primary sources only when needed, and stops at the deciding evidence. `research.md` records a Sources table |
-| Act at 85% or higher | Each decision has a confidence that rests on its deciding source or a test. Decisions at 85% or higher go to Decisions; the rest go to Open Decisions, and no work acts on them |
+| Act at 90% or higher | Each decision has a confidence that rests on its deciding source or a test. Decisions at 90% or higher go to Decisions; the rest go to Open Decisions, and no work acts on them |
 | Checks prove they can fail | Every check finds its targets from the folders, reports what it examined, passes on clean code, and fails on a planted violation |
 | Retired terms are guarded | Renamed or removed names, paths, and patterns are listed in a data file, and the test command fails when one returns |
 | Fix the cause | A failing check is resolved by fixing whichever of the code or the check is wrong, never by weakening the check |
