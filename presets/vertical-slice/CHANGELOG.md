@@ -6,6 +6,8 @@
 
 - A rule in `domain/` that guards state several slices change has an owner that holds that state and its transitions, its aggregate. Slices change that state only through the owner, loading and saving it through their own `repository`, and one transaction changes one owner's state with its outbox and inbox rows.
 - Shared Domain Rules gains a Guards state column.
+- A domain value with its own rule is a type that rejects an invalid value when it is created. The handler converts the request into these types before it decides. A type starts in its first slice and moves to `domain/` when a second slice needs it, and a limit a client sees stays in the contract. `data-model.md` lists each type, its rule, and the contract field it backs.
+- Constitution principle: Values that check themselves.
 - Requires vsa `>=0.16.0,<0.17.0`.
 
 ### Changed

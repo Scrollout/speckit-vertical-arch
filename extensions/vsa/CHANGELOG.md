@@ -8,6 +8,7 @@
 
 ### Changed
 
+- VSA-004 also warns about a value rule checked outside its domain type, checked in more than one place, or with no type that enforces it.
 - Supports vertical-slice 0.22.x.
 
 ## 0.15.0

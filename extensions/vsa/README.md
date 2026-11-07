@@ -28,7 +28,7 @@ The full wording of each rule lives in [`commands/speckit.vsa.check.md`](command
 | VSA-001 | Project Structure, context placement, slice roles, contract layout, and folder, service, and frontend naming | Blocking |
 | VSA-002 | Task order: layers, or code before its contract and failing tests | Blocking |
 | VSA-003 | Hidden reach between slices or contexts | Blocking |
-| VSA-004 | Duplicated domain rules | Warning |
+| VSA-004 | Duplicated domain rules, and value rules checked outside their domain type | Warning |
 | VSA-005 | Values outside their home | Blocking |
 | VSA-006 | Test command, boundary check, and contract checks | Blocking |
 | VSA-007 | Store shared between contexts | Blocking |
