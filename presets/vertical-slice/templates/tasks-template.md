@@ -63,7 +63,7 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
+- [ ] T004 Set up the migration runner in [context]/infrastructure/, when the store uses migrations (no migrations yet: each slice adds its own, naming the slice in its header)
 - [ ] T005 [P] Implement authentication/authorization framework
 - [ ] T006 [P] Setup API routing and middleware structure
 - [ ] T007 Set up the store connection in [context]/infrastructure/ (no tables yet: each slice adds the schema its tests need)
