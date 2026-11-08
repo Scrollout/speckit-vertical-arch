@@ -77,6 +77,18 @@ while read -r declared; do
   fi
 done < <(grep -E '^\s+file: ' "$PRESET_DIR/preset.yml" | sed -E 's/.*file: "?([^"]+)"?/\1/')
 
+# The README's version badges are static (the repository may be private, so badge services cannot
+# read the manifests), so they must match the manifests.
+speckit_requirement="$(awk '$1 == "speckit_version:" { gsub(/"/, "", $2); print $2; exit }' "$PRESET_DIR/preset.yml")"
+speckit_badge="$(printf '%s' "$speckit_requirement" | sed -e 's/>/%3E/g' -e 's/</%3C/g' -e 's/=/%3D/g')"
+for badge in "vertical--slice-${preset_version}-" "vsa-${extension_version}-" "Spec%20Kit-${speckit_badge}-"; do
+  if grep -qF "img.shields.io/badge/${badge}" "$REPO_ROOT/README.md"; then
+    pass "README badge matches the manifests: ${badge%-}"
+  else
+    fail "README badge does not match the manifests: expected img.shields.io/badge/${badge}..."
+  fi
+done
+
 echo "== No retired structure or names"
 
 # Terms replaced by the current structure and naming rules. Changelogs may still name them.
