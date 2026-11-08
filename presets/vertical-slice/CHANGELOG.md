@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.23.0
+
+### Added
+
+- A `contract` backend role: when a context writes its contracts in a source language, each slice keeps the source of the operations and event versions it provides in its own `contract` file.
+- Shared contract source and the compiler settings may sit in `[context]/contracts/`, beside the version folders. Version folders hold only the emitted documents, which remain the contract.
+- A drift check in the test command, when a context writes its contracts in a source language: it fails when the committed documents differ from what the sources emit, or when a document has no source. The plan's Boundary Check gains a Contract drift line.
+- A program finds the slices it runs from the slice folders. An HTTP slice's `entry` exposes its routes, and a consumer slice's `entry` declares its queue or subscription and the event keys it handles.
+- When the broker or queue configuration is in the repository, the published-names test checks it against what the consumer slices declare and against the `manifest`.
+- When the store uses migrations, the schema is one ordered migration history in `infrastructure/`, and each migration names the slice it serves in its header.
+- A fresh sub-agent works only in its own copy of the repository, in a folder of its own, and runs the test command there with its own state. It never runs git in the real working tree and never writes there, except to add its test files. Parallel fresh sub-agents never share a folder.
+- Constitution principle: Slices own their vertical.
+- Requires vsa `>=0.17.0,<0.18.0`.
+
+### Changed
+
+- Adding a slice no longer changes a program. A slice is no longer listed in `entrypoints/`, and a hand-kept list of slices in a program is not allowed unless it is generated from the folders or the test command compares it with them.
+- The outbox relay runs in `entrypoints/queue/` or as `entrypoints/outbox/`, no longer as a line in a list.
+- Constitution: Fresh review requires the fresh agent's own copy and folder.
+
 ## 0.22.0
 
 ### Added
