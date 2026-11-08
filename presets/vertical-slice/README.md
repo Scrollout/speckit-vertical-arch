@@ -54,10 +54,20 @@ The plan template has four optional sections. Each is deleted unless it applies,
 
 These parts fit the existing Project Structure with no new folders inside a context:
 
-- Consumers, projections, and workflow steps are slices listed in `entrypoints/queue/`. The outbox relay is polling, run from `entrypoints/queue/` or `entrypoints/outbox/`, or log tailing, an external connector the plan names. Consumers record their idempotency key in the inbox in the same transaction as their state change. Timeouts start from `entrypoints/schedule/`.
+- Consumers, projections, and workflow steps are slices that `entrypoints/queue/` finds from the slice folders. Each one's `entry` declares its queue or subscription and the event keys it handles. The outbox relay is polling, run from `entrypoints/queue/` or `entrypoints/outbox/`, or log tailing, an external connector the plan names. Consumers record their idempotency key in the inbox in the same transaction as their state change. Timeouts start from `entrypoints/schedule/`.
 - Workflow state lives in `domain/[workflow_name]_workflow/`. The outbox, inbox, and relay code live in `infrastructure/`.
 - Each contract is versioned on its own, in its provider's `contracts/[contract-name]/[version]/`, such as `order-placed/v1/schema.json` for one event's message schema. A context that uses AsyncAPI keeps one AsyncAPI document for all its events, such as `order-management-events/v1/asyncapi.yaml`.
 - A context stays in `[context]/` however it deploys. Its `manifest` records its owner, deployment unit, owned store, and the events it publishes and consumes. Contexts that share one process are started from `hosts/[host_name]/`, which holds only wiring.
+
+## Slices own their vertical
+
+A slice owns what only it declares, so adding a slice adds files in its own folder, plus the store schema change, the `manifest` entries, and the deploy packaging its program needs:
+
+| Part | Where |
+|---|---|
+| Contract source | When a context writes its contracts in a source language, such as TypeSpec, each slice's part is in its `contract` file, and shared parts and the compiler settings sit in `contracts/` beside the version folders. The emitted documents stay the contract, and a drift check fails when they differ from the sources |
+| Routes and consumers | Each program finds its slices from the slice folders. An HTTP slice's `entry` exposes its routes, and a consumer slice's `entry` declares its queue or subscription and its event keys. Broker or queue configuration kept in the repository is checked against them and the `manifest` |
+| Store schema | In `infrastructure/`, as one ordered migration history when the store uses migrations. Each migration names the slice it serves |
 
 ## Naming
 
@@ -76,7 +86,7 @@ These parts fit the existing Project Structure with no new folders inside a cont
 | Event | Noun and past-tense verb, contract folder in kebab-case holding its message schema | `OrderPlaced` → `contracts/order-placed/v1/schema.json` |
 | Package or namespace | The stack's style, where the stack lets it differ from the folder | Go `package placeorder`, C# `OrderManagement.Features.PlaceOrder` |
 | Frontend names in the browser | Prefixed with the context's kebab-case name | `order-management-cart`, `order-management:order-placed` |
-| Backend files in a slice | By role: `entry`, `handler`, `request`, `response`, `event`, `repository` | `place_order/backend/handler.py` |
+| Backend files in a slice | By role: `entry`, `handler`, `request`, `response`, `event`, `repository`, and `contract` with a contract source language | `place_order/backend/handler.py`, `place_order/backend/contract.tsp` |
 
 Folders that code imports are `snake_case`, the one style every stack can import: hyphens are not importable in Python or legal in Java packages. Names that leave the code are kebab-case: Kubernetes and DNS names allow only lowercase letters, digits, and `-`.
 
@@ -93,7 +103,7 @@ These rules apply to every project:
 | Checks prove they can fail | Every check finds its targets from the folders, reports what it examined, passes on clean code, and fails on a planted violation |
 | Retired terms are guarded | Renamed or removed names, paths, and patterns are listed in a data file, and the test command fails when one returns |
 | Fix the cause | A failing check is resolved by fixing whichever of the code or the check is wrong, never by weakening the check |
-| Fresh review | The vsa check runs in a fresh sub-agent, and a fresh sub-agent writes each slice's failing tests, when the agent supports one; otherwise the same session, reported as such |
+| Fresh review | The vsa check runs in a fresh sub-agent, and a fresh sub-agent writes each slice's failing tests, when the agent supports one; otherwise the same session, reported as such. A fresh sub-agent works in its own copy of the repository, in a folder of its own |
 
 ## Exceptions
 

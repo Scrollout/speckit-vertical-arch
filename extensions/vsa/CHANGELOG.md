@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.17.0
+
+### Added
+
+- VSA-001 flags a program that runs its slices from a hand-kept list, unless the list is generated from the folders or the test command compares it with them.
+- VSA-001 flags a consumer slice whose `entry` does not declare its queue or subscription and its event keys.
+- VSA-001 flags contract source outside a slice's `contract` file and `contracts/`, and contract source in a version folder.
+- VSA-001 flags a schema change outside the one ordered migration history, or a migration that does not name its slice, when the store uses migrations.
+- VSA-006 flags a missing or passing drift check when a context writes its contracts in a source language.
+
+### Changed
+
+- VSA-001 does not flag a slice's `contract` file, or shared contract source and compiler settings beside the version folders.
+- VSA-005 accepts a consumer slice's queue and event keys named once in its `entry` with a test, and flags broker or queue configuration in the repository that no test checks.
+- VSA-010 compares broker or queue configuration in the repository with what the consumer slices declare.
+- A fresh reviewer that runs a tool that writes works in its own copy of the repository, in a folder of its own.
+- Supports vertical-slice 0.23.x.
+
 ## 0.16.0
 
 ### Added

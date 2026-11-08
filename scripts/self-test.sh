@@ -111,6 +111,11 @@ Set up the store connection and schema
 | ID | Severity
 one group per slice
 server side
+listed in `entrypoints/
+listed in entrypoints/
+its line in entrypoints/
+as a line in entrypoints/
+list it in [context]/entrypoints/
 EOF
 
 echo "== Fresh project"

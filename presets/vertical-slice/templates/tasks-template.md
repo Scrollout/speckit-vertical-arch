@@ -98,9 +98,9 @@ Examples of foundational tasks (adjust based on your project):
 
 #### Slice: [SliceName]
 
-- [ ] T014 [US1] Write the contract version [slice] needs in [context]/contracts/[contract-name]/[version]/ (only when it crosses a context boundary, and only what it needs)
+- [ ] T014 [US1] Write the contract version [slice] needs in [context]/contracts/[contract-name]/[version]/ (only when it crosses a context boundary, and only what it needs). With a contract source language, edit [context]/features/[slice_name]/contract.[ext] and regenerate the documents
 - [ ] T015 [US1] Write [slice] failing tests in [context]/features/[slice_name]/tests/ from its contract and the spec (they fail first)
-- [ ] T016 [US1] Implement [slice] in [context]/features/[slice_name]/: entry, request, response, handler, event, and repository, adding only the store schema changes its tests need in [context]/infrastructure/, and list it in the program that serves it, [context]/entrypoints/[trigger]/ (depends on T013, T014, T015)
+- [ ] T016 [US1] Implement [slice] in [context]/features/[slice_name]/: entry, request, response, handler, event, and repository, adding only the store schema changes its tests need in [context]/infrastructure/, as a new migration whose header names the slice when the store uses migrations. Its entry exposes its routes, or declares its queue and event keys, so the program that serves it, [context]/entrypoints/[trigger]/, finds it from the folder (depends on T013, T014, T015)
 
 #### Slice: [SecondSliceName]
 
@@ -128,7 +128,7 @@ Examples of foundational tasks (adjust based on your project):
 #### Slice: [SliceName]
 
 - [ ] T020 [US2] Write [slice] failing tests in [context]/features/[slice_name]/tests/ from its contract and the spec, after its contract task when it crosses a context boundary (they fail first)
-- [ ] T021 [US2] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
+- [ ] T021 [US2] Implement [slice] in [context]/features/[slice_name]/, which [context]/entrypoints/[trigger]/ finds from the folder
 - [ ] T022 [US2] Use the existing owner in [context]/domain/ for any rule the plan's Shared Domain Rules lists
 - [ ] T023 [US2] Integrate with User Story 1 components (if needed)
 
@@ -154,12 +154,12 @@ Examples of foundational tasks (adjust based on your project):
 #### Slice: [SliceName]
 
 - [ ] T026 [US3] Write [slice] failing tests in [context]/features/[slice_name]/tests/ from its contract and the spec, after its contract task when it crosses a context boundary (they fail first)
-- [ ] T027 [US3] Implement [slice] in [context]/features/[slice_name]/, and list it in [context]/entrypoints/[trigger]/
+- [ ] T027 [US3] Implement [slice] in [context]/features/[slice_name]/, which [context]/entrypoints/[trigger]/ finds from the folder
 
 #### Slice: [ConsumerSliceName] (only when the plan's Events table lists this context as a consumer)
 
 - [ ] T028 [P] [US3] Write [consumer slice] tests in [context]/features/[consumer_slice_name]/tests/, including a duplicate delivery that changes nothing (they fail first)
-- [ ] T029 [US3] Implement [consumer slice] in [context]/features/[consumer_slice_name]/: consume [EventName] v[N] from its contract, record its idempotency key in the inbox in the same transaction as its state change, publish any resulting event through the outbox, and list it in [context]/entrypoints/queue/
+- [ ] T029 [US3] Implement [consumer slice] in [context]/features/[consumer_slice_name]/: consume [EventName] v[N] from its contract, record its idempotency key in the inbox in the same transaction as its state change, publish any resulting event through the outbox, and declare its queue or subscription and the event keys it handles in its entry, which [context]/entrypoints/queue/ finds from the folder
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -203,7 +203,7 @@ Examples of foundational tasks (adjust based on your project):
 
 - Tests (if included) MUST be written and FAIL before implementation
 - Slices in the order of the plan's Slice Map, each finished and validated before the next
-- Within a slice: its contract when it crosses a context boundary, then its failing tests, then one task that implements it, including only the store schema its tests need and its line in entrypoints/
+- Within a slice: its contract when it crosses a context boundary, then its failing tests, then one task that implements it, including only the store schema its tests need. The program finds it from its folder
 - Story complete before moving to next priority
 
 ### Parallel Opportunities

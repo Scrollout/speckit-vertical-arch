@@ -182,8 +182,11 @@
 
 - **[Stack]**: [checker], configured in [file]
 - **Contracts**: [lint and additive-only check per contract kind]
+- **Contract drift**: [with a contract source language: the check that fails when the committed documents differ from
+  what the sources emit, or when a document has no source. Delete otherwise]
 - **Artifacts**: [rule that leaves tests out, and how the test command checks each built artifact]
-- **Discovery**: [how each check finds contexts, slices, contracts, schemas, and artifacts from the folders]
+- **Discovery**: [how each check finds contexts, slices, contracts, contract sources, schemas, and artifacts, and how
+  each program finds its slices, from the folders]
 - **Coverage**: [what each check reports it examined, and which counts must be above zero]
 - **Planted violations**: [where each check's planted-violation test and clean test live]
 - **Retired terms**: [data file of retired names, paths, and patterns, and its owner]
@@ -244,19 +247,24 @@ specs/[###-feature]/
 [context]/                    # One fixed place per context, however it deploys, in snake_case, starting with a letter
 ├── manifest.[ext]            # What the context declares: owner, deployment unit, owned store, published types
 │                             #   and events with versions, consumed events with versions
-├── contracts/
+├── contracts/                # With a contract source language: the shared source (the service and its versions,
+│   │                         #   shared value types and models, roles, events several slices publish) and the
+│   │                         #   compiler settings, beside the version folders
 │   └── [contract-name]/
 │       └── [version]/        # One contract document per published version, and nothing else: openapi.yaml for
 │                             #   an API, a message schema (schema.json, .avsc, .proto) for one event, or one
-│                             #   asyncapi.yaml for the context's events. Each contract is versioned on its own
+│                             #   asyncapi.yaml for the context's events. Each contract is versioned on its own.
+│                             #   Emitted from the sources when the context uses a source language
 ├── entrypoints/
 │   └── [trigger]/            # One program, named in snake_case by what starts it (http, queue, schedule, cli),
-│       │                     #   never by the context's name: entry point, wiring, routing, shared frontend host.
+│       │                     #   never by the context's name: entry point, wiring, shared frontend host. Finds
+│       │                     #   its slices from the slice folders, never from an unchecked hand-kept list.
 │       │                     #   Deployed as [context]-[trigger] in kebab-case (at most 63 characters), or
 │       │                     #   started by a host in hosts/. The folders are the list of programs
 │       └── tests/            # The program's tests, never shipped
 ├── infrastructure/           # Store setup (open, schema, transactions, seed data), outbox, inbox, relay code,
-│   │                         #   and hosting. No slice queries
+│   │                         #   and hosting. No slice queries. With migrations, one ordered history, each
+│   │                         #   migration naming in its header the slice it serves
 │   └── tests/
 ├── domain/                   # Rules two or more slices need for correctness, and workflow state
 │   ├── [workflow_name]_workflow/
@@ -264,9 +272,12 @@ specs/[###-feature]/
 ├── features/
 │   └── [slice_name]/         # verb_noun in snake_case, named for what it does, never for what triggers it
 │       ├── backend/          # Role-named files in the stack's style; leave out roles the slice does not need:
-│       │                     #   entry (how its trigger reaches it), handler, request, response, event (maps a
-│       │                     #   change to a published event's schema), and repository. entry, request, and
-│       │                     #   response may share one file; handler, event, and repository never do
+│       │                     #   entry (how its trigger reaches it: its routes, or its queue or subscription and
+│       │                     #   the event keys it handles), handler, request, response, event (maps a change to
+│       │                     #   a published event's schema), repository, and contract (with a contract source
+│       │                     #   language: the source of the operations and event versions the slice provides).
+│       │                     #   entry, request, and response may share one file; handler, event, and
+│       │                     #   repository never do
 │       ├── frontend/         # The slice's user interface, when UI reach is includes frontend. Never an API
 │       │                     #   client for other contexts: they use the contract
 │       └── tests/            # The slice's tests, never shipped
@@ -283,9 +294,10 @@ tests/
 
 <!--
   Services, events, and workflows use the same shape:
-  - An event consumer, a projection, and a workflow step are each a slice in features/, listed in entrypoints/queue/.
+  - An event consumer, a projection, and a workflow step are each a slice in features/, run by entrypoints/queue/,
+    which finds them from the slice folders. Each one's entry declares its queue or subscription and its event keys.
   - A timeout is entrypoints/schedule/ starting a slice.
-  - The outbox relay runs as a line in entrypoints/queue/, or as its own program in entrypoints/outbox/ when it must run alone.
+  - The outbox relay runs in entrypoints/queue/, or as its own program in entrypoints/outbox/ when it must run alone.
   - A contract lives only in its provider's contracts/[contract-name]/[version]/. A repository-level index of
     contracts, if any, is generated, never edited.
 -->

@@ -3,7 +3,7 @@ schema_version: "1.0"
 preset:
   id: "vertical-slice"
   name: "Vertical Slice"
-  version: "0.22.0"
+  version: "0.23.0"
   description: "Makes Spec-Kit organize plans, tasks, and implementation by bounded context and feature slice"
   author: "Marius Gologan"
   repository: "https://github.com/Scrollout/speckit-vertical-arch"
@@ -13,7 +13,7 @@ requires:
   speckit_version: ">=1.2.5"
   extensions:
     - id: vsa
-      version: ">=0.16.0,<0.17.0"
+      version: ">=0.17.0,<0.18.0"
       required: false
 
 provides:
