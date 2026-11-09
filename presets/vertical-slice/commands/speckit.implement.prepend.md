@@ -2,7 +2,7 @@
 
 ## Vertical Slice Implementation Rules
 
-These rules take precedence over any later instruction that describes work by technical layer, such as "models, services" or "core development".
+These rules take precedence over any later instruction that describes work by technical layer, such as "models, services" or "core development". Where a later instruction conflicts with these rules, follow these rules.
 
 - Build outside-in, test-first: the skeleton first, then for each slice its contract (only what it needs), its failing tests, written as the Red step says, and the minimal code that passes them, adding only the store schema changes those tests need. Never build a contract, a store schema, or a shared model ahead of the slice that needs it.
 - Build one slice at a time, in the order in `tasks.md`. Finish a slice and pass its validation before starting the next one.
@@ -20,8 +20,9 @@ These rules take precedence over any later instruction that describes work by te
 - Never read or write another context's store. Publish each event through the outbox in the same transaction as the state change, from the schema in the publisher's `contracts/[contract-name]/[version]/`. Make each consumer record its idempotency key in the inbox in the same transaction as its state change, so a duplicate delivery changes nothing. Prefix every name a frontend shares in the browser with its context's kebab-case name. Give each workflow step before the pivot that changes state its compensation, as the plan's Workflows table names it, and retry the pivot and later steps until they succeed.
 - When a slice raises a question the plan does not answer, resolve it by the planning rules' research method, and add it to `research.md` Sources and the plan's Decisions. When its confidence is below 90%, add it to Open Decisions, leave the code that depends on it unwritten, and continue with the rest.
 - When a check fails, decide whether the code or the check is wrong, and fix the one that is wrong. Never loosen a check, a threshold, a test expectation, or a report rule to make it pass. A deliberate change to a check records its reason in the plan's Slice Rule Exceptions table.
-- Keep every check's planted-violation test and clean test passing, so each check still proves it can fail.
+- Keep every check's planted-violation test and clean test passing, so each check still proves it can fail. When a change moves, renames, or restructures what a check or its planted-violation tests target, such as the sources, the layout, or how targets are found, run the test command and every check's planted-violation and clean tests before committing it, or before the next slice when git is not used.
 - When the vsa check is installed, this command is not finished while the review after it reports a blocking finding: fix each one, or record a justified exception in the plan's Slice Rule Exceptions table, and run the review again, passing it the previous report. Run the review at most 3 times for this command. When the third run still reports a blocking finding, stop and report the open findings with status `FAIL`.
+- Give every finding a home before reporting done: fix each warning the review reports, and each case a fresh sub-agent reports as left untested, or record it as a task in `tasks.md`, in an `#### Open items` group in the phase it belongs to, or in Polish when it belongs to no single phase. To close one instead, add it there as a checked task ending `closed: <reason>`. Never leave one only in a report. An open item recorded in this run, though unchecked, blocks neither the next phase nor reporting done: list them in the report, and do them in a later run.
 - Before reporting done, stop everything the run started outside the test command, such as containers, servers, and background processes.
 
 <!-- vertical-slice:implement-rules-end -->

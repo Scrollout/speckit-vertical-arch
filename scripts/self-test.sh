@@ -130,6 +130,26 @@ as a line in entrypoints/
 list it in [context]/entrypoints/
 EOF
 
+echo "== Shared rule terms"
+
+# Several files must each keep their own rule for the `#### Open items` group. Each line below is a
+# file and a phrase only that file's rule contains, so dropping one rule fails here.
+while IFS='|' read -r rel phrase; do
+  if grep -qF -- "$phrase" "$REPO_ROOT/$rel"; then
+    pass "keeps its Open items rule: $rel"
+  else
+    fail "lost its Open items rule ($phrase): $rel"
+  fi
+done <<'RULES'
+presets/vertical-slice/commands/speckit.tasks.prepend.md|Keep every `#### Open items` group when regenerating
+presets/vertical-slice/commands/speckit.analyze.append.md|traces to the finding it records
+presets/vertical-slice/commands/speckit.implement.prepend.md|Give every finding a home
+presets/vertical-slice/templates/tasks-template.md|closed: [reason]
+extensions/vsa/commands/speckit.vsa.check.md|The position of an `#### Open items` group
+presets/vertical-slice/commands/speckit.tasks.prepend.md|Give every warning the review reports a home
+presets/vertical-slice/templates/constitution-addendum.md|**Findings have a home**
+RULES
+
 echo "== Fresh project"
 
 (cd "$WORKDIR" && git init -q)

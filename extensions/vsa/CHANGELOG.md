@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.18.0
+
+### Changed
+
+- The feature directory comes from the prompt when it names one, before `.specify/feature.json`, so a fresh reviewer whose copy lacks that file is not reported `NOT RUN`.
+- The fresh reviewer's copy includes the default branch and the working tree's uncommitted changes, including untracked files, when git is available.
+- VSA-002 does not flag the position of an `#### Open items` group, nor a test task there that follows its slice's implementation; the group's tasks are ordered among themselves.
+- A re-run checks that each previous warning now has a home in `tasks.md`, and reports one with no home again as a warning under its own rule.
+- A `WARN` report's next step tells the developer to record each warning as a task in an `#### Open items` group of its phase, or why it is closed.
+- Supports vertical-slice 0.24.x.
+
 ## 0.17.0
 
 ### Added

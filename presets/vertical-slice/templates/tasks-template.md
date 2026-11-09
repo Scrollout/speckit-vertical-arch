@@ -106,6 +106,11 @@ Examples of foundational tasks (adjust based on your project):
 
 - [ ] T017 [P] [US1] Write and then implement [second slice] in [context]/features/[second_slice_name]/ the same way, using the [rule] owner
 
+#### Open items (only when a review or a fresh sub-agent reported something to do)
+
+- [ ] TXXX [US1] [finding] in [context]/features/[slice_name]/ (from [the review or report])
+- [x] TXXX [US1] [finding] (from [the review or report]) closed: [reason]
+
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
 ---

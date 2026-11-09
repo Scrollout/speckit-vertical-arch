@@ -7,7 +7,8 @@ These checks take precedence over any stock text above that they conflict with. 
 Add these checks to the detection passes, and report failures as findings with MEDIUM severity or higher:
 
 - Every user story in `spec.md` appears in the plan's Slice Map.
-- Every implementation task sits under a `Slice` or `Shared` heading in `tasks.md`.
+- Every implementation task sits under a `Slice`, `Shared`, or `Open items` heading in `tasks.md`.
+- A task in an `#### Open items` group traces to the finding it records, which counts as its mapped requirement.
 - No task group is ordered by technical layer.
 - Every interaction between contexts names a contract.
 - A domain rule used by two or more slices has one owner. When it guards state, its Shared Domain Rules row names that state, and every slice that changes the state is in its Used by column.
