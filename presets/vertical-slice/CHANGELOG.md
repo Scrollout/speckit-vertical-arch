@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.24.0
+
+### Added
+
+- Findings have a home: before `/speckit-implement` reports done, each warning the review reports, and each case a fresh sub-agent reports as left untested, is fixed, or becomes a task in an `#### Open items` group of its phase in `tasks.md` (or Polish), or a checked task there that states why it is closed. Recorded open items do not block reporting done; the report lists them. `/speckit-tasks` gives the review's warnings a home the same way.
+- `tasks.md` may hold an `#### Open items` group per phase, after its slice groups. `/speckit-tasks` keeps it when regenerating, `/speckit-analyze` accepts tasks under it, and the tasks template shows one.
+- The Red step's fresh sub-agent reports each case from the spec or the contract that it left untested, and why.
+- A change that moves, renames, or restructures what a check or its planted-violation tests target runs the test command and every check's planted-violation and clean tests before it is committed, or, without git, before the next slice. The constitution's "Checks prove they can fail" says so too.
+- The self-test checks that the commands, the tasks template, the constitution addendum, and the vsa check each still state their rule for the `#### Open items` group.
+- A closed finding is a checked task ending `closed: <reason>`, shown in the tasks template.
+- Where a later instruction conflicts with the implement rules, the implement rules win; an open item recorded in a run blocks neither the next phase nor reporting done.
+- A project that has already adopted its constitution gets the new and amended principles by running `/speckit-constitution` again; installing the preset does not change an existing constitution.
+- Constitution principle: Findings have a home.
+- Requires vsa `>=0.18.0,<0.19.0`.
+
+### Changed
+
+- A fresh sub-agent's copy includes the default branch and the working tree's uncommitted changes, including untracked files, when git is available. Its brief always names the feature directory, because a file kept out of version control, such as `.specify/feature.json`, may not be in the copy.
+- Constitution: Fresh review requires a complete copy.
+
 ## 0.23.0
 
 ### Added

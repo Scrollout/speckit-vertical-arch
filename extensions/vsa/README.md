@@ -5,7 +5,7 @@ Adds `speckit.vsa.check`, which checks a feature's artifacts and code against th
 ## Requirements
 
 - Spec-Kit 1.2.5 or later.
-- The `vertical-slice` preset, version 0.23.x. An extension manifest cannot require a preset, so the check tests for it when it runs and reports `NOT RUN` if it's missing, disabled, or a different version.
+- The `vertical-slice` preset, version 0.24.x. An extension manifest cannot require a preset, so the check tests for it when it runs and reports `NOT RUN` if it's missing, disabled, or a different version.
 
 ## Install and remove
 
@@ -43,14 +43,14 @@ VSA-007 to VSA-010 run only when the plan or the code has services, events, or w
 
 ## Reviewer
 
-The check runs in a fresh sub-agent with no prior context when the agent supports one, so the author does not review its own work. Anything it runs that writes, it runs in its own copy of the repository, in a folder of its own. Otherwise it reports `Reviewer: same session (fresh review NOT RUN: no sub-agent support)` and runs in the current session. It never asks the user to run anything.
+The check runs in a fresh sub-agent with no prior context when the agent supports one, so the author does not review its own work. Anything it runs that writes, it runs in its own copy of the repository, in a folder of its own, which includes the default branch and uncommitted changes, including untracked files, when git is available, and its brief names the feature directory. Otherwise it reports `Reviewer: same session (fresh review NOT RUN: no sub-agent support)` and runs in the current session. It never asks the user to run anything.
 
 ## Results
 
 | Status | Meaning |
 |---|---|
 | `FAIL` | A blocking finding has no recorded exception. Fix it or record one before continuing |
-| `WARN` | Only warnings. Work may continue |
+| `WARN` | Only warnings. Work may continue; give each warning a home in `tasks.md` |
 | `PASS` | No unaccepted findings in what was examined |
 | `NOT RUN` | The preset or the current feature is missing. This is never a pass |
 
@@ -60,6 +60,7 @@ The check reviews only the current feature's artifacts and the code it adds or c
 
 - Blocking tells the developer to stop, but it cannot prevent someone continuing by hand.
 - The check is agent-driven, so results can vary between runs, and it cannot prove that no duplication exists.
+- `/speckit-tasks` and `/speckit-implement` re-run the check only after a blocking finding, so a result with only warnings is not checked again. A later run has no previous report, so it does not check homes; it reports a warning again only when its cause is still in scope.
 - It doesn't replace language-specific boundary tooling, which belongs in the project's test command. It checks that the test command runs the boundary check and every context's tests.
 
 To accept an exception, add a row to the plan's Slice Rule Exceptions table naming the rule, the location, and the reason.
