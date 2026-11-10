@@ -3,8 +3,9 @@
 <!-- vertical-slice:test-ledger-entry -->
 
 <!--
-  The implement rules' Changing tests say when an entry is written, by whom, and what it must
-  show, and the vsa check's VSA-014 checks it. This template fixes only the format of one entry.
+  The implement rules' Changing tests says when an entry is written, by whom, and what it must
+  show, and the vsa check's VSA-014 checks each entry. This template fixes only the format of
+  one entry.
 
   Each entry is its own file, specs/[###-feature-name]/test-ledger/[scope]-[n].md. The scope is
   the writer's: the slice it was briefed for, or the unique tag its brief gives it, such as

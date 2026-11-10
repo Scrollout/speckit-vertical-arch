@@ -38,7 +38,7 @@ The full wording of each rule lives in [`commands/speckit.vsa.check.md`](command
 | VSA-011 | Work acting on an open, low-confidence, or unsourced decision | Blocking |
 | VSA-012 | A check, threshold, or report rule weakened since the merge base, without a recorded reason | Blocking |
 | VSA-013 | Guarded state changed around its owner, or two owners changed in one transaction | Blocking |
-| VSA-014 | A test change, source change, Red point, or verdict that breaks the implement rules' Changing tests, a test change with no ledger entry, a due test with no later entry, or code that behaves differently under test | Blocking |
+| VSA-014 | A test change, source change, Red point, or verdict that breaks the implement rules' Changing tests, a test change with no ledger entry, a due test that no task names after tasks or that has no later entry after implement, or code that behaves differently under test | Blocking |
 
 VSA-007 to VSA-010 run only when the plan or the code has services, events, or workflows.
 

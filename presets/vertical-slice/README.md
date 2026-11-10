@@ -109,7 +109,7 @@ These rules apply to every project:
 
 ## Tests change through the ledger
 
-The constitution principle of that name says what must hold. The implement rules' Changing tests say how a test or its sources may change, the `test-ledger-entry-template` gives the format of each entry in a feature's `test-ledger/` folder, and the vsa check's VSA-014 says how a change is found. This README does not restate them.
+The constitution principle of that name says what must hold. The implement rules' Changing tests says how a test or its sources may change, the `test-ledger-entry-template` gives the format of each entry in a feature's `test-ledger/` folder, and the vsa check's VSA-014 says how a change is found. This README does not restate them.
 
 ## Exceptions
 

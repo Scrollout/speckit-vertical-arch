@@ -52,7 +52,7 @@ provides:
       name: "test-ledger-entry-template"
       file: "templates/test-ledger-entry-template.md"
       strategy: "replace"
-      description: "Adds the fixed format of one entry in a feature's test-ledger/ folder, which records Red points, verdicts, and test changes as the implement rules' Changing tests say."
+      description: "Adds the fixed format of one entry in a feature's test-ledger/ folder, which records Red points, verdicts, and test changes as the implement rules' Changing tests says."
     - type: "template"
       name: "constitution-template"
       file: "templates/constitution-addendum.md"

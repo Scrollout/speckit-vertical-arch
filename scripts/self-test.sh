@@ -190,6 +190,7 @@ while IFS='|' read -r rel phrase; do
   fi
 done <<'POINTERS'
 presets/vertical-slice/templates/constitution-addendum.md|- **Tests change through the ledger**: The author of code MUST NOT change, skip, or remove a test that judges it
+presets/vertical-slice/templates/constitution-addendum.md|MUST be recorded in the feature's test ledger.
 presets/vertical-slice/templates/constitution-addendum.md|except to add its test files and its test ledger entries
 presets/vertical-slice/commands/speckit.implement.prepend.md|### Changing tests
 presets/vertical-slice/commands/speckit.implement.prepend.md|These steps carry out the constitution's Tests change through the ledger
@@ -198,7 +199,9 @@ presets/vertical-slice/commands/speckit.implement.prepend.md|except a VSA-014 fi
 presets/vertical-slice/commands/speckit.tasks.prepend.md|except a VSA-014 finding, which only the implement rules' Changing tests resolves
 presets/vertical-slice/commands/speckit.tasks.prepend.md|Give each test that the implement rules' Changing tests makes due a task that names it
 presets/vertical-slice/commands/speckit.plan.append.md|briefed as the implement rules' Changing tests says
-presets/vertical-slice/templates/test-ledger-entry-template.md|The implement rules' Changing tests say when an entry is written
+presets/vertical-slice/commands/speckit.plan.append.md|A change to a requirement that an existing test checks follows the implement rules' Changing tests
+presets/vertical-slice/commands/speckit.tasks.prepend.md|A change to a requirement that an existing test checks follows the implement rules' Changing tests
+presets/vertical-slice/templates/test-ledger-entry-template.md|The implement rules' Changing tests says when an entry is written
 presets/vertical-slice/README.md|This README does not restate them
 extensions/vsa/commands/speckit.vsa.check.md|- VSA-014: judge by the implement rules' Changing tests
 extensions/vsa/commands/speckit.vsa.check.md|No row accepts a VSA-014 finding

@@ -96,6 +96,7 @@ Every context uses this structure, whatever its stacks. It fixes where a file go
 - Resolve each open question by progressive distributed disclosure. The information is spread across the spec, the plan's tables, manifests, contracts, code, tests, and external documents. Map the candidate sources by their cheapest signal, such as headings, table rows, file names, or page titles. Open the most promising one at the smallest useful depth. After each step, re-rank the rest by how likely each is to decide the question, and drop the ones that cannot change it. Follow a link to a primary source only when the current source cannot decide. Stop at the piece of information that decides the question, not when every source is read.
 - Record each question in `research.md` with a **Sources** table: the sources tried, in order, the deciding source (a file, a URL, or a test), and the decision. When the agent cannot reach a primary source, mark the decision `unverified`.
 - Give each decision a confidence that rests on its deciding source or on a test, never on assumption. Copy each decision to the plan's Decisions table when its confidence is 90% or higher, and to Open Decisions otherwise. An `unverified` decision is below 90%.
+- A change to a requirement that an existing test checks follows the implement rules' Changing tests.
 - No task and no code acts on an open decision. It stays open until a source or a test raises it to 90% or higher, or the user decides it.
 
 ### Polyglot and multi-team features

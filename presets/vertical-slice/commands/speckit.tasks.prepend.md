@@ -18,6 +18,7 @@ These rules take precedence over any later instruction in this command that orga
 - Keep every `#### Open items` group when regenerating `tasks.md`, with each task's text and checked state, at the end of its phase, before its Checkpoint when it has one, and renumber its tasks in sequence with the rest. When its phase no longer exists, move it to Polish. It holds tasks recorded from a review or a fresh sub-agent's report.
 - When the plan has Events, Workflows, or Read Models rows: put the outbox and inbox setup in Foundational for each context that publishes or consumes, and give each event consumer, workflow step, compensation, and projection its own `#### Slice:` group. A consumer's tests include a duplicate delivery that changes nothing. A workflow step's tests include its compensation.
 - No task acts on a decision in the plan's Open Decisions table.
+- A change to a requirement that an existing test checks follows the implement rules' Changing tests.
 - Give each test that the implement rules' Changing tests makes due a task that names it: the Red-point task of the slice whose sources made it due, or, in an `#### Open items` group, a task that sends it to a fresh sub-agent.
 - Give each check in the plan's Boundary Check section one task that writes its planted-violation test and its clean test, in Setup when every slice needs the check, and otherwise before the first slice that needs it.
 - When a task renames or removes a name, path, or pattern, the same task adds the old one to the retired-terms file.
