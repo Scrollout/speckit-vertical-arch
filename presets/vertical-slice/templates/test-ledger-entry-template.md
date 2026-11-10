@@ -3,15 +3,14 @@
 <!-- vertical-slice:test-ledger-entry -->
 
 <!--
-  The constitution's Tests change through the ledger says when an entry is written, by whom, and
-  what it must show. This template fixes only the format of one entry.
+  The implement rules' Changing tests say when an entry is written, by whom, and what it must
+  show, and the vsa check's VSA-014 checks it. This template fixes only the format of one entry.
 
-  Each entry is its own file, specs/[###-feature-name]/test-ledger/[scope]-[n].md, never edited or
-  removed. The scope is the writer's: the slice it was briefed for, or the unique tag its brief
-  gives it, such as `due-3`, never where the tests live, which the `test` and `files` fields say.
-  A writer takes the next unused number in its scope. Parallel writers never share a scope, so no
-  two writers collide. Refer to an entry from anywhere, such
-  as a skip's reason or a task, by its path without `.md`: `specs/[###-feature-name]/test-ledger/[scope]-[n]`.
+  Each entry is its own file, specs/[###-feature-name]/test-ledger/[scope]-[n].md. The scope is
+  the writer's: the slice it was briefed for, or the unique tag its brief gives it, such as
+  `due-3`, never where the tests live, which the `test` and `files` fields say. A writer takes the
+  next unused number in its scope. Refer to an entry from anywhere, such as a skip's reason or a
+  task, by its path without `.md`: `specs/[###-feature-name]/test-ledger/[scope]-[n]`.
 
   The heading's kind is `red-point`, `stands`, `changed`, `skipped`, or `removed`. The fields follow
   as `- [field]: [value]` lines, in this order. Leave out a field its kind does not use.

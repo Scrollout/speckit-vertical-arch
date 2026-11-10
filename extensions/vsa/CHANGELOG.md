@@ -4,13 +4,13 @@
 
 ### Added
 
-- VSA-014 judges every test change, source change, Red point, and verdict against the constitution's Tests change through the ledger. It pairs tests across moves, judges each entry on its own change, diffs or hashes each test against its baseline, compares the tests the test command selects now and at the merge base, checks that the commit that added an entry holds what it lists, reports due tests with no later entry, changes after a standing verdict, same-session entries no fresh agent has judged, and code that behaves differently under test, applies each `fails on` edit or a targeted change of its own, and checks each skip. No exception accepts it.
+- VSA-014 judges every test change, source change, Red point, and verdict against the implement rules' Changing tests. It pairs tests across moves, judges each entry on its own change, diffs or hashes each test and source against its baseline, compares the tests the test command selects now and at the merge base, checks each entry's commit, reports due tests without a task (after tasks) or an entry (after implement), test changes after a standing verdict, skips added to an existing test, same-session entries no fresh agent has judged, and code that behaves differently under test, applies each `fails on` edit or a targeted change of its own, and lists work from before adoption. No exception accepts it.
 - The report gains a **Test changes** line. The scope includes `spec.md` and every feature's `test-ledger/` folder.
 
 ### Changed
 
+- The command's read-only rule applies to the project's working tree; the reviewer may still run and edit code in its own copy.
 - VSA-012 covers checks, thresholds, and report rules, and the checks the test command runs; test changes, and how the test command runs and selects tests, moved to VSA-014.
-- At the review after tasks, a due test is a finding only when no task names it.
 - Supports vertical-slice 0.25.x.
 
 ## 0.18.0

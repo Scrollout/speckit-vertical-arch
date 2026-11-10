@@ -150,36 +150,57 @@ presets/vertical-slice/commands/speckit.tasks.prepend.md|Give every warning the 
 presets/vertical-slice/templates/constitution-addendum.md|**Findings have a home**
 RULES
 
-echo "== One statement of Tests change through the ledger"
+echo "== Constitution principles are short"
 
-# The principle is the only statement of how a test may change. Its definition of a test change
-# appears in no other file, and each file that depends on it keeps its pointer to it.
+# Each principle in the constitution addendum states what must hold in one paragraph, as a
+# constitution does. Procedure belongs in the commands, templates, and the vsa check.
+addendum="$PRESET_DIR/templates/constitution-addendum.md"
+while IFS= read -r line; do
+  name="$(printf '%s' "$line" | sed -E 's/^- \*\*([^*]+)\*\*.*/\1/')"
+  if [[ "${#line}" -le 1000 ]]; then
+    pass "principle is at most 1,000 characters: $name"
+  else
+    fail "principle is ${#line} characters, over 1,000: $name"
+  fi
+done < <(grep -E '^- \*\*' "$addendum")
+if grep -qE '^[[:space:]]+[-*] ' "$addendum"; then
+  fail "a principle in the constitution addendum has sub-bullets"
+else
+  pass "no principle in the constitution addendum has sub-bullets"
+fi
+
+echo "== One home for Changing tests"
+
+# The implement rules' Changing tests is the only statement of how a test may change. Its
+# definition of a test change appears in no other file, and each file that depends on it keeps its
+# pointer to it.
 definition='alters what an existing test requires'
 homes="$(grep -rlF --include='*.md' --exclude='CHANGELOG.md' -- "$definition" "$PRESET_DIR" "$EXTENSION_DIR" "$REPO_ROOT/README.md" | sed "s|^$REPO_ROOT/||" | sort)" || true
-if [[ "$homes" == "presets/vertical-slice/templates/constitution-addendum.md" ]]; then
-  pass "Tests change through the ledger is stated once"
+if [[ "$homes" == "presets/vertical-slice/commands/speckit.implement.prepend.md" ]]; then
+  pass "the definition of a test change is stated once, in Changing tests"
 else
-  fail "Tests change through the ledger is stated outside the addendum, or not in it: ${homes:-nowhere}"
+  fail "the definition of a test change is stated outside Changing tests, or not in it: ${homes:-nowhere}"
 fi
 
 while IFS='|' read -r rel phrase; do
   if grep -qF -- "$phrase" "$REPO_ROOT/$rel"; then
-    pass "points to Tests change through the ledger: $rel"
+    pass "points to its home: $rel"
   else
-    fail "lost its pointer to Tests change through the ledger ($phrase): $rel"
+    fail "lost its pointer ($phrase): $rel"
   fi
 done <<'POINTERS'
-presets/vertical-slice/templates/constitution-addendum.md|- **Tests change through the ledger**: This principle is the one statement
-presets/vertical-slice/templates/constitution-addendum.md|Whether a test is wrong is decided only as Tests change through the ledger says
-presets/vertical-slice/templates/constitution-addendum.md|ledger entries that Tests change through the ledger gives it
-presets/vertical-slice/commands/speckit.implement.prepend.md|only as that principle allows. Before reporting done, send every test that principle makes due
-presets/vertical-slice/commands/speckit.implement.prepend.md|except a VSA-014 finding, which only the constitution's Tests change through the ledger resolves
-presets/vertical-slice/commands/speckit.tasks.prepend.md|except a VSA-014 finding, which only the constitution's Tests change through the ledger resolves
-presets/vertical-slice/commands/speckit.tasks.prepend.md|Give each test that the constitution's Tests change through the ledger makes due a task that names it
-presets/vertical-slice/commands/speckit.plan.append.md|with its changed sources and its entries, as the constitution's Tests change through the ledger says
-presets/vertical-slice/templates/test-ledger-entry-template.md|The constitution's Tests change through the ledger says
-presets/vertical-slice/README.md|and this README does not restate it
-extensions/vsa/commands/speckit.vsa.check.md|- VSA-014: judge by the principle Tests change through the ledger
+presets/vertical-slice/templates/constitution-addendum.md|- **Tests change through the ledger**: The author of code MUST NOT change, skip, or remove a test that judges it
+presets/vertical-slice/templates/constitution-addendum.md|except to add its test files and its test ledger entries
+presets/vertical-slice/commands/speckit.implement.prepend.md|### Changing tests
+presets/vertical-slice/commands/speckit.implement.prepend.md|These steps carry out the constitution's Tests change through the ledger
+presets/vertical-slice/commands/speckit.implement.prepend.md|Change a test or a source it rests on only as Changing tests below says
+presets/vertical-slice/commands/speckit.implement.prepend.md|except a VSA-014 finding, which only Changing tests below resolves
+presets/vertical-slice/commands/speckit.tasks.prepend.md|except a VSA-014 finding, which only the implement rules' Changing tests resolves
+presets/vertical-slice/commands/speckit.tasks.prepend.md|Give each test that the implement rules' Changing tests makes due a task that names it
+presets/vertical-slice/commands/speckit.plan.append.md|briefed as the implement rules' Changing tests says
+presets/vertical-slice/templates/test-ledger-entry-template.md|The implement rules' Changing tests say when an entry is written
+presets/vertical-slice/README.md|This README does not restate them
+extensions/vsa/commands/speckit.vsa.check.md|- VSA-014: judge by the implement rules' Changing tests
 extensions/vsa/commands/speckit.vsa.check.md|No row accepts a VSA-014 finding
 extensions/vsa/README.md|| VSA-014 |
 POINTERS
