@@ -110,7 +110,6 @@ Examples of foundational tasks (adjust based on your project):
 
 - [ ] TXXX [US1] [finding] in [context]/features/[slice_name]/ (from [the review or report])
 - [x] TXXX [US1] [finding] (from [the review or report]) closed: [reason]
-- [ ] TXXX [US1] Make [test] pass and remove its expected failure (specs/[###-feature-name]/test-ledger/[scope]-[n])
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 

@@ -41,7 +41,6 @@ specify preset remove vertical-slice
 - Both vsa hooks are registered.
 - The README badges match the manifests.
 - The commands, the tasks template, the constitution addendum, and the vsa check each still state their rule for the `#### Open items` group.
-- Every principle in the constitution addendum is one paragraph of at most 1,000 characters, the definition of a test change is stated only in the implement rules' Changing tests, every file that depends on it still points to it, the entry template keeps every kind and field the vsa check reads, and the template resolves.
 - Removal leaves no markers.
 
 It runs Spec-Kit `v1.2.5` through `uvx` by default. Set `SPECKIT_REF` to test another tag, or `SPECIFY=specify` to use an installed CLI. CI runs it on every push and pull request.

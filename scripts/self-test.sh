@@ -148,84 +148,10 @@ presets/vertical-slice/templates/tasks-template.md|closed: [reason]
 extensions/vsa/commands/speckit.vsa.check.md|The position of an `#### Open items` group
 presets/vertical-slice/commands/speckit.tasks.prepend.md|Give every warning the review reports a home
 presets/vertical-slice/templates/constitution-addendum.md|**Findings have a home**
+presets/vertical-slice/templates/constitution-addendum.md|**Tests change only through a fresh agent**
+presets/vertical-slice/commands/speckit.implement.prepend.md|do not change, skip, or remove a test that judges your code
+extensions/vsa/commands/speckit.vsa.check.md|without a `Test-author:` trailer
 RULES
-
-echo "== Constitution principles are short"
-
-# Each principle in the constitution addendum states what must hold in one paragraph, as a
-# constitution does. Procedure belongs in the commands, templates, and the vsa check.
-addendum="$PRESET_DIR/templates/constitution-addendum.md"
-while IFS= read -r line; do
-  name="$(printf '%s' "$line" | sed -E 's/^- \*\*([^*]+)\*\*.*/\1/')"
-  if [[ "${#line}" -le 1000 ]]; then
-    pass "principle is at most 1,000 characters: $name"
-  else
-    fail "principle is ${#line} characters, over 1,000: $name"
-  fi
-done < <(grep -E '^- \*\*' "$addendum")
-if grep -qE '^[[:space:]]+[-*] ' "$addendum"; then
-  fail "a principle in the constitution addendum has sub-bullets"
-else
-  pass "no principle in the constitution addendum has sub-bullets"
-fi
-
-echo "== One home for Changing tests"
-
-# The implement rules' Changing tests is the only statement of how a test may change. Its
-# definition of a test change appears in no other file, and each file that depends on it keeps its
-# pointer to it.
-definition='alters what an existing test requires'
-homes="$(grep -rlF --include='*.md' --exclude='CHANGELOG.md' -- "$definition" "$PRESET_DIR" "$EXTENSION_DIR" "$REPO_ROOT/README.md" | sed "s|^$REPO_ROOT/||" | sort)" || true
-if [[ "$homes" == "presets/vertical-slice/commands/speckit.implement.prepend.md" ]]; then
-  pass "the definition of a test change is stated once, in Changing tests"
-else
-  fail "the definition of a test change is stated outside Changing tests, or not in it: ${homes:-nowhere}"
-fi
-
-while IFS='|' read -r rel phrase; do
-  if grep -qF -- "$phrase" "$REPO_ROOT/$rel"; then
-    pass "points to its home: $rel"
-  else
-    fail "lost its pointer ($phrase): $rel"
-  fi
-done <<'POINTERS'
-presets/vertical-slice/templates/constitution-addendum.md|- **Tests change through the ledger**: The author of code MUST NOT change, skip, or remove a test that judges it
-presets/vertical-slice/templates/constitution-addendum.md|MUST be recorded in the feature's test ledger.
-presets/vertical-slice/templates/constitution-addendum.md|except to add its test files and its test ledger entries
-presets/vertical-slice/commands/speckit.implement.prepend.md|### Changing tests
-presets/vertical-slice/commands/speckit.implement.prepend.md|These steps carry out the constitution's Tests change through the ledger
-presets/vertical-slice/commands/speckit.implement.prepend.md|Change a test or a source it rests on only as Changing tests below says
-presets/vertical-slice/commands/speckit.implement.prepend.md|except a VSA-014 finding, which only Changing tests below resolves
-presets/vertical-slice/commands/speckit.tasks.prepend.md|except a VSA-014 finding, which only the implement rules' Changing tests resolves
-presets/vertical-slice/commands/speckit.tasks.prepend.md|Give each test that the implement rules' Changing tests makes due a task that names it
-presets/vertical-slice/commands/speckit.plan.append.md|briefed as the implement rules' Changing tests says
-presets/vertical-slice/commands/speckit.plan.append.md|A change to a requirement that an existing test checks follows the implement rules' Changing tests
-presets/vertical-slice/commands/speckit.tasks.prepend.md|A change to a requirement that an existing test checks follows the implement rules' Changing tests
-presets/vertical-slice/templates/test-ledger-entry-template.md|The implement rules' Changing tests says when an entry is written
-presets/vertical-slice/README.md|This README does not restate them
-extensions/vsa/commands/speckit.vsa.check.md|- VSA-014: judge by the implement rules' Changing tests
-extensions/vsa/commands/speckit.vsa.check.md|No row accepts a VSA-014 finding
-extensions/vsa/README.md|| VSA-014 |
-POINTERS
-
-# The entry template defines the format and the vsa check parses it, so both must name every kind
-# and field, each in backticks in the check and as a table row or heading kind in the template.
-template="$PRESET_DIR/templates/test-ledger-entry-template.md"
-check="$EXTENSION_DIR/commands/speckit.vsa.check.md"
-for kind in red-point stands changed skipped removed; do
-  if grep -qF -- "\`$kind\`" "$template" && grep -qF -- "\`$kind\`" "$check"; then
-    pass "entry kind in template and check: $kind"
-  else
-    fail "entry kind missing from the template or the check: $kind"
-  fi
-done
-for field in slice test by judges because 'replaced by' 'fails on' 'removed test' files sources; do
-  if grep -qE -- "^  \| $field \|" "$template" && grep -qF -- "\`$field\`" "$check"; then
-    pass "entry field in template and check: $field"
-  else
-    fail "entry field missing from the template or the check: $field"
-  fi
-done
 
 echo "== Fresh project"
 
@@ -306,7 +232,6 @@ check_resolve() {
 check_resolve plan-template "top layer from: vertical-slice v$preset_version"
 check_resolve tasks-template "top layer from: vertical-slice v$preset_version"
 check_resolve constitution-template "[append] vertical-slice v$preset_version"
-check_resolve test-ledger-entry-template "top layer from: vertical-slice v$preset_version"
 check_resolve speckit.tasks "[prepend] vertical-slice v$preset_version"
 check_resolve speckit.implement "[prepend] vertical-slice v$preset_version"
 check_resolve speckit.plan "[append] vertical-slice v$preset_version"

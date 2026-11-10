@@ -12,7 +12,7 @@ $ARGUMENTS
 
 ## Rules for this command
 
-This command is read-only. Do not change any artifact or code in the project's working tree. Report only what you examined.
+This command is read-only. Do not change any artifact or code. Report only what you examined.
 
 ## 1. Preconditions
 
@@ -42,7 +42,7 @@ On a re-run, the prompt includes the previous report. Verify each of its finding
 
 ## 3. Scope
 
-- **Artifacts**: the feature's `spec.md`, `plan.md`, `research.md`, `data-model.md`, `tasks.md`, and `contracts/`; and every feature's `test-ledger/` folder.
+- **Artifacts**: the feature's `plan.md`, `research.md`, `data-model.md`, `tasks.md`, and `contracts/`.
 - **Code**: file paths named in `tasks.md`. When git is available, add files changed since the merge base with the default branch, including uncommitted changes. Without git, use the task paths and say so in the report.
 - **Excluded**: existing code that the feature did not add or change. Do not report it.
 
@@ -67,9 +67,8 @@ Find the evidence by progressive distributed disclosure. Start from the cheapest
 | VSA-009 | A workflow with no pivot, a step before the pivot that changes state with no compensation, or a workflow with no timeout or no recorded deadline | Blocking |
 | VSA-010 | An event published or consumed that is missing from the plan's Events table, its versioned contract, or a manifest, or that is not named in the past tense | Blocking |
 | VSA-011 | A task or code that acts on a decision in Open Decisions, below 90% confidence, with no confidence, or with no deciding source in `research.md` Sources | Blocking |
-| VSA-012 | A check, threshold, or report rule weakened since the merge base without a reason in Slice Rule Exceptions | Blocking |
+| VSA-012 | A check, threshold, test expectation, or report rule weakened since the merge base, or since a slice's Red point, without a reason in Slice Rule Exceptions | Blocking |
 | VSA-013 | State that a rule in `domain/` guards, changed by a slice without going through that rule's owner, or one transaction that changes more than one owner's state | Blocking |
-| VSA-014 | A test change, source change, Red point, or verdict that breaks the implement rules' Changing tests, a test change with no ledger entry, a due test that no task names after tasks or that has no later entry after implement, or code that behaves differently under test | Blocking |
 
 Check VSA-006 first. When the test command runs the boundary check and the check covers every planning rule, a direct import is that check's job, and the review does not repeat it. The judgment rules are read in full whatever the checks report.
 
@@ -111,31 +110,18 @@ Check VSA-006 first. When the test command runs the boundary check and the check
 - VSA-009: for each row in the plan's Workflows table, check that it names its pivot, that every step before the pivot that changes state names a compensation slice that exists (the pivot and later steps need none), and that the timeout is started from `entrypoints/schedule/`. Check that the deadline the Workflows table names is recorded in the same transaction as the step that starts the wait, that the timeout slice finds overdue records through it and acts only on records still waiting, and that a second run changes nothing.
 - VSA-010: compare every event the code publishes or consumes with the plan's Events table, the publisher's `contracts/[contract-name]/[version]/`, and the publisher's and consumer's `manifest`. When the broker or queue configuration is in the repository, also compare its queues, subscriptions, and bindings with what the consumer slices' `entry` files declare. An event missing from any of them is a finding, and so is an event name that is not a noun and a past-tense verb.
 - VSA-011: compare each task and the code it names with the plan's Decisions and Open Decisions tables and `research.md` Sources. Report work that depends on an open decision, a decision below 90% or with no confidence, and a decision whose deciding source is missing or does not support it.
-- VSA-012: compare each check's configuration, the test command's checks, and the report rules with the merge base. Report a removed or loosened check, a raised threshold, a widened ignore list, or a failure turned into a pass, unless Slice Rule Exceptions records the reason. A change to how the test command runs or selects the tests, or to a test, its files, or its sources, is judged under VSA-014, not here.
+- VSA-012: compare each check's configuration, the test command, test expectations, and the report rules with the merge base, and each slice's tests with its Red point, reporting the test author under **Examined**. Report a removed or loosened check, a raised threshold, a widened ignore list, an assertion removed or weakened, or a failure turned into a pass, unless Slice Rule Exceptions records the reason. Also report, with no exception: a test changed since its Red point in a commit without a `Test-author:` trailer, or with `Test-author: same session` when you run as a fresh sub-agent; a skip that is not a strict expected failure naming an open task; and a requirement a test checks that changed after `tasks.md` with no answer recorded in the spec's Clarifications.
 - VSA-013: for each Shared Domain Rules row that names guarded state, find every slice that writes that state, from the plan's Slice Map, the tasks, the slices' repositories, and the store schema. A slice that writes it without loading the owner and asking it to make the change is a finding, such as a repository that updates a status column the owner guards. So is a slice that changes the state but is missing from the row's Used by column, and a transaction that changes two owners' state when Slice Rule Exceptions records no reason. Outbox and inbox rows in the same transaction are not a second owner, and a slice that only reads guarded state is not a finding. At the review after tasks, before code exists, a task that changes guarded state without using the owner is a finding.
-
-- VSA-014: judge by the implement rules' Changing tests, in `.specify/presets/vertical-slice/commands/speckit.implement.prepend.md`, which defines a test's files, a requirement and when it is settled, a test change, a source change, a due test, a baseline, and the record. Read every entry in every feature's `test-ledger/` folder. Entries are of kind `red-point`, `stands`, `changed`, `skipped`, or `removed`, with the fields `slice`, `test`, `by`, `judges`, `because`, `replaced by`, `fails on`, `removed test`, `files`, and `sources`, in the test ledger entry template's format. Do everything that runs or edits code in your own copy of the repository. Where running the whole test command is too slow, run the affected tests and the build.
-  1. Pair tests across moves. With git, use rename detection and test names to pair each test that disappeared with one that appeared. Only an unpaired test counts as removed or added.
-  2. Judge each entry the feature added on its own change: diff its files and sources from their state before it, which is the previous entry for those files, otherwise the merge base or the commit that first added them, to the commit that added it, or to the working tree for an uncommitted entry, which you report as uncommitted. Without git, judge the entry's files and sources whole against the requirement it rests on. Check its fields for its kind, that the requirement in `because` exists and supports it, and that an altered or replacing test checks no less than its sources require. With git, check the commit that added it against the record rule. A breach that a later entry by a fresh agent `judges` is cured: list it under **Test changes**, not as a finding.
-  3. Judge each edit to a test's files after its baseline: with git, diff from the commit that added its latest entry, otherwise from the merge base or the commit that first added them; without git, compare each test file an entry lists with its hash, and judge a changed file whole. Report each test change with no entry. List each test that no entry lists under **Not examined** when there is no git.
-  4. Find what stopped running. List the tests the test command selects now and, with git, at the merge base, or, when the merge base has no test command, the tests its test files define. An unpaired test gone, left out of the selection, or newly skipped is a test change.
-  5. Judge each source change: with git, each one since the merge base; without git, each source an entry lists whose hash differs. Report one that Changing tests does not allow, such as a settled requirement changed without the user's words quoted beside the change, or changed through a plan Decision or a contract or seed-data task. At the review after tasks, report each test it makes due that no task in `tasks.md` names. At the review after implement, report each such test that has no later entry.
-  6. Report a test change made after a `stands` entry for that test in any feature's ledger, unless the requirement in that entry's `because` has changed or a later spec supersedes it.
-  7. Prove that each altered or replacing test can fail. For one that passes on the current code, apply its `fails on` edit, or, when it has none, a targeted change of your own to the behaviour it checks. Report one that does not fail by an assertion, or fails only because the build or every test breaks. Report one the current code fails, unless it belongs to an unfinished slice's Red point or is skipped.
-  8. For each skip added to an existing test since its baseline, check that it is a strict expected failure, that its reason names an entry of kind `skipped`, and that an unchecked task in that feature's `tasks.md` names the entry.
-  9. When you run as a fresh sub-agent, report each entry in any feature's ledger whose `by` is the same session and that no later entry by a fresh agent `judges`.
-  10. In the code the feature changed, report code that detects it runs under test or behaves differently there.
-  11. Report each rule of Changing tests that a change or its entry does not meet, naming the rule. List every test change and source change examined, with its entry, under **Test changes**, and mark `before adoption` each one that Changing tests counts as before adoption.
 
 ## 6. Exceptions
 
-An exception matches when a row in the plan's Slice Rule Exceptions table names the rule and the location and gives a reason. Report a matched finding under **Accepted exceptions**, not in the findings table. No row accepts a VSA-014 finding: ledger entries are records, not exceptions.
+An exception matches when a row in the plan's Slice Rule Exceptions table names the rule and the location and gives a reason. Report a matched finding under **Accepted exceptions**, not in the findings table.
 
 ## 7. Report
 
 Print this report exactly, using the highest applicable status. The first line is always `## VSA Check: <STATUS>`, with nothing else on it. A re-run is shown on the **Run** line, never in the header. Each finding row's first column is the rule ID, such as `VSA-003`, one row per finding, and every row names its evidence:
 
-- `FAIL`: at least one blocking finding has no matching exception. The next step tells the developer not to proceed until it is fixed or a justified exception is recorded. For a VSA-014 finding, it tells the developer to resolve it as the implement rules' Changing tests says.
+- `FAIL`: at least one blocking finding has no matching exception. The next step tells the developer not to proceed until it is fixed or a justified exception is recorded.
 - `WARN`: no unaccepted blocking findings, and at least one warning. Work may continue. The next step tells the developer to fix each warning, or record it as a task in `tasks.md`, in an `#### Open items` group in its phase or in Polish when it belongs to no single phase, or as a checked task ending `closed: <reason>`, unless that is already done.
 - `PASS`: no unaccepted findings in the examined artifacts.
 - `NOT RUN`: a precondition failed. This is never a pass.
@@ -148,7 +134,6 @@ Print this report exactly, using the highest applicable status. The first line i
 **Feature**: <feature directory>
 **Examined**: <artifacts and code scope, and for each rule that holds, why>
 **Not examined**: <artifacts and reasons, or None>
-**Test changes**: <each test change and source change examined, with its ledger entry, or None>
 
 | Rule | Severity | Location | Evidence | Detail |
 |---|---|---|---|---|
