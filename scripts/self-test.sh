@@ -150,6 +150,59 @@ presets/vertical-slice/commands/speckit.tasks.prepend.md|Give every warning the 
 presets/vertical-slice/templates/constitution-addendum.md|**Findings have a home**
 RULES
 
+echo "== One statement of Tests change through the ledger"
+
+# The principle is the only statement of how a test may change. Its definition of a test change
+# appears in no other file, and each file that depends on it keeps its pointer to it.
+definition='alters what an existing test requires'
+homes="$(grep -rlF --include='*.md' --exclude='CHANGELOG.md' -- "$definition" "$PRESET_DIR" "$EXTENSION_DIR" "$REPO_ROOT/README.md" | sed "s|^$REPO_ROOT/||" | sort)" || true
+if [[ "$homes" == "presets/vertical-slice/templates/constitution-addendum.md" ]]; then
+  pass "Tests change through the ledger is stated once"
+else
+  fail "Tests change through the ledger is stated outside the addendum, or not in it: ${homes:-nowhere}"
+fi
+
+while IFS='|' read -r rel phrase; do
+  if grep -qF -- "$phrase" "$REPO_ROOT/$rel"; then
+    pass "points to Tests change through the ledger: $rel"
+  else
+    fail "lost its pointer to Tests change through the ledger ($phrase): $rel"
+  fi
+done <<'POINTERS'
+presets/vertical-slice/templates/constitution-addendum.md|- **Tests change through the ledger**: This principle is the one statement
+presets/vertical-slice/templates/constitution-addendum.md|Whether a test is wrong is decided only as Tests change through the ledger says
+presets/vertical-slice/templates/constitution-addendum.md|ledger entries that Tests change through the ledger gives it
+presets/vertical-slice/commands/speckit.implement.prepend.md|only as that principle allows. Before reporting done, send every test that principle makes due
+presets/vertical-slice/commands/speckit.implement.prepend.md|except a VSA-014 finding, which only the constitution's Tests change through the ledger resolves
+presets/vertical-slice/commands/speckit.tasks.prepend.md|except a VSA-014 finding, which only the constitution's Tests change through the ledger resolves
+presets/vertical-slice/commands/speckit.tasks.prepend.md|Give each test that the constitution's Tests change through the ledger makes due a task that names it
+presets/vertical-slice/commands/speckit.plan.append.md|with its changed sources and its entries, as the constitution's Tests change through the ledger says
+presets/vertical-slice/templates/test-ledger-entry-template.md|The constitution's Tests change through the ledger says
+presets/vertical-slice/README.md|and this README does not restate it
+extensions/vsa/commands/speckit.vsa.check.md|- VSA-014: judge by the principle Tests change through the ledger
+extensions/vsa/commands/speckit.vsa.check.md|No row accepts a VSA-014 finding
+extensions/vsa/README.md|| VSA-014 |
+POINTERS
+
+# The entry template defines the format and the vsa check parses it, so both must name every kind
+# and field, each in backticks in the check and as a table row or heading kind in the template.
+template="$PRESET_DIR/templates/test-ledger-entry-template.md"
+check="$EXTENSION_DIR/commands/speckit.vsa.check.md"
+for kind in red-point stands changed skipped removed; do
+  if grep -qF -- "\`$kind\`" "$template" && grep -qF -- "\`$kind\`" "$check"; then
+    pass "entry kind in template and check: $kind"
+  else
+    fail "entry kind missing from the template or the check: $kind"
+  fi
+done
+for field in slice test by judges because 'replaced by' 'fails on' 'removed test' files sources; do
+  if grep -qE -- "^  \| $field \|" "$template" && grep -qF -- "\`$field\`" "$check"; then
+    pass "entry field in template and check: $field"
+  else
+    fail "entry field missing from the template or the check: $field"
+  fi
+done
+
 echo "== Fresh project"
 
 (cd "$WORKDIR" && git init -q)
@@ -229,6 +282,7 @@ check_resolve() {
 check_resolve plan-template "top layer from: vertical-slice v$preset_version"
 check_resolve tasks-template "top layer from: vertical-slice v$preset_version"
 check_resolve constitution-template "[append] vertical-slice v$preset_version"
+check_resolve test-ledger-entry-template "top layer from: vertical-slice v$preset_version"
 check_resolve speckit.tasks "[prepend] vertical-slice v$preset_version"
 check_resolve speckit.implement "[prepend] vertical-slice v$preset_version"
 check_resolve speckit.plan "[append] vertical-slice v$preset_version"

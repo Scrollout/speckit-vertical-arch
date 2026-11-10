@@ -36,9 +36,10 @@ Spec-Kit composition can only add text. So the strategy follows the artifact kin
 | `plan-template` | Template with layered source trees | replace | Context and Slice Map sections replace the `models/`, `services/`, and `api/` trees. Adds optional service, event, workflow, and read model sections, and Slice Rule Exceptions |
 | `tasks-template` | Template with layered sample tasks | replace | Story and slice groups replace Foundational entity tasks and "Models before services". Shows an `#### Open items` group |
 | `constitution-template` | Template with placeholders only | append | Offers vertical slice principles |
+| `test-ledger-entry-template` | Template core does not have | replace | Adds the fixed format of one entry in a feature's `test-ledger/` folder |
 | `speckit.plan` | Command | append | Adds context, Slice Map, Project Structure, per-slice model, value, and boundary check rules, which take precedence over the core feature-wide `data-model.md` |
 | `speckit.tasks` | Command | prepend | Slice grouping and ordering take precedence over "Tests, Models, Services, Endpoints, Integration". Keeps `#### Open items` groups when regenerating |
-| `speckit.implement` | Command | prepend | One slice at a time, and the test command after every slice, take precedence over "Implement models, services". Findings get a home as `#### Open items`, which do not block phases or done |
+| `speckit.implement` | Command | prepend | One slice at a time, and the test command after every slice, take precedence over "Implement models, services". Findings get a home as `#### Open items`, which do not block phases or done. Tests that are due go to a fresh sub-agent |
 | `speckit.analyze` | Command | append | Adds slice consistency checks, which take precedence over the core severity heuristic that would rank a layered task order as "Style/wording improvements". Accepts `#### Open items` tasks |
 
 ## Services, events, and workflows
@@ -102,13 +103,17 @@ These rules apply to every project:
 | Act at 90% or higher | Each decision has a confidence that rests on its deciding source or a test. Decisions at 90% or higher go to Decisions; the rest go to Open Decisions, and no work acts on them |
 | Checks prove they can fail | Every check finds its targets from the folders, reports what it examined, passes on clean code, and fails on a planted violation. A change that moves, renames, or restructures what a check or its planted-violation tests target runs the test command and every check's planted-violation and clean tests before it is committed, or, without git, before the next slice |
 | Retired terms are guarded | Renamed or removed names, paths, and patterns are listed in a data file, and the test command fails when one returns |
-| Fix the cause | A failing check is resolved by fixing whichever of the code or the check is wrong, never by weakening the check |
+| Fix the cause | A failing check or test is resolved by fixing whichever of the code, the check, or the test is wrong, never by weakening one that is right |
 | Fresh review | The vsa check runs in a fresh sub-agent, and a fresh sub-agent writes each slice's failing tests, when the agent supports one; otherwise the same session, reported as such. A fresh sub-agent works in its own copy of the repository, in a folder of its own. When git is available, the copy includes the default branch and the working tree's uncommitted changes, including untracked files. The brief names the feature directory |
 | Findings have a home | Each review warning, and each case a fresh sub-agent reports as untested, is fixed, or recorded as a task in an `#### Open items` group of its phase, or as a checked task ending `closed: <reason>` there, before the work it concerns is reported done |
 
+## Tests change through the ledger
+
+The constitution principle of that name is the one statement of how an existing test and its sources may change, and this README does not restate it. Red points, verdicts, and test changes are recorded in each feature's `test-ledger/` folder, one file per entry, in the format of the `test-ledger-entry-template`. The vsa check judges them under VSA-014.
+
 ## Exceptions
 
-Record an accepted exception to a slice rule in the plan's Slice Rule Exceptions table, with the rule, the location, and the reason. Complexity Tracking stays for Constitution Check violations.
+Record an accepted exception to a slice rule in the plan's Slice Rule Exceptions table, with the rule, the location, and the reason. Complexity Tracking stays for Constitution Check violations. Ledger entries are records, not exceptions, and no exception accepts a VSA-014 finding.
 
 ## Testing
 

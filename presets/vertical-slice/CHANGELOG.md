@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.25.0
+
+### Added
+
+- Constitution principle: Tests change through the ledger, the one statement of how an existing test and its sources may change. A test's files are defined by role: everything loaded or set only for testing, and the parts of the test command that set how tests run and which run; the checks it runs stay under Fix the cause. Only a fresh agent makes a test change when one is available. A source changes only through the step that owns it, traced to a spec requirement or a plan Decision, and the tests it affects become due for a fresh agent. A verdict that a test is right rests on the requirement it cites. Code must not behave differently under test.
+- Each feature keeps a `test-ledger/` folder, one file per entry, for Red points, verdicts, and test changes. Each entry names its requirement and lists the SHA-256 of the test files it leaves and the sources it rests on, so the ledger works without git, and the review can check that a commit holds what the entry's writer wrote. Entry file names carry the writer's scope, so parallel writers never collide.
+- Template: `test-ledger-entry-template`, the fixed format of one entry. The tasks template shows an Open items task that names an entry.
+- The Red step commits the slice's sources before the fresh agent is briefed, and briefs it with each existing test that is due. `/speckit-tasks` gives each due test a task that names it.
+- A requirement is settled once an existing test checks it, a test at the merge base or committed in the feature, whether or not an entry lists it; only the spec, through specify or clarify, or a later feature that supersedes it, may change what a settled test requires. A plan Decision may change only what no settled requirement covers.
+- The self-test checks that the principle's definition is stated only in the constitution addendum, that each file that depends on it points to it, that the entry template and the vsa check share every kind and field, and that the template resolves.
+- Tests that predate 0.25.0 have no entries; their baseline is the merge base, or the commit that first added them, and the requirements they check are settled like any other.
+- A project that has already adopted its constitution gets the new and amended principles by running `/speckit-constitution` again.
+- Requires vsa `>=0.19.0,<0.20.0`.
+
+### Changed
+
+- Constitution: Fix the cause covers tests as well as checks.
+- Constitution: Fresh review lets a fresh agent write the test files and ledger entries the new principle gives it.
+- `/speckit-implement`: test and source changes follow the principle, and every due test goes to a fresh sub-agent before the run reports done. A VSA-014 finding is resolved only by the principle, never by an exception; `/speckit-tasks` says the same for its review.
+
 ## 0.24.0
 
 ### Added
