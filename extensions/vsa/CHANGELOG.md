@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.19.0
+
+### Changed
+
+- VSA-012 also reports, with no exception, a test changed since its Red point without a `Test-author:` trailer (or `same session` when the review runs as a fresh sub-agent), a skip that is not a strict expected failure naming an open task, and a requirement a test checks changed after `tasks.md` with no recorded clarification.
+- Supports vertical-slice 0.25.x.
+
 ## 0.18.0
 
 ### Changed

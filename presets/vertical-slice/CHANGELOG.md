@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.25.0
+
+### Added
+
+- Constitution principle: Tests change only through a fresh agent. `/speckit-implement` sends a test believed wrong to a fresh sub-agent, commits each test change on its own with a `Test-author:` trailer, skips only as a strict expected failure naming an open task, and changes a requirement a test checks only through `/speckit-clarify`.
+- A project that has already adopted its constitution gets the new principle by running `/speckit-constitution` again.
+- Requires vsa `>=0.19.0,<0.20.0`.
+
+### Changed
+
+- Constitution: Fix the cause covers tests as well as checks.
+
 ## 0.24.0
 
 ### Added
