@@ -105,6 +105,7 @@ These rules apply to every project:
 | Fix the cause | A failing check or test is resolved by fixing whichever of the code, the check, or the test is wrong, never by weakening the one that is right |
 | Tests change only through a fresh agent | When a fresh sub-agent is available, only it changes, skips, or removes a test that judges the code, judging from the spec and the contract; a requirement a test checks changes only through a recorded clarification; a skip is a strict expected failure naming an open task |
 | Fresh review | The vsa check runs in a fresh sub-agent, and a fresh sub-agent writes each slice's failing tests, when the agent supports one; otherwise the same session, reported as such. A fresh sub-agent works in its own copy of the repository, in a folder of its own. When git is available, the copy includes the default branch and the working tree's uncommitted changes, including untracked files. The brief names the feature directory |
+| Review converges | A finding cites what it violates, or it is a suggestion. A re-run checks only the earlier findings and the changed lines. After 3 rounds, a person decides |
 | Findings have a home | Each review warning, and each case a fresh sub-agent reports as untested, is fixed, or recorded as a task in an `#### Open items` group of its phase, or as a checked task ending `closed: <reason>` there, before the work it concerns is reported done |
 
 ## Exceptions

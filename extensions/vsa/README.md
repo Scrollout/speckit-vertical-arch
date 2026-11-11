@@ -5,7 +5,7 @@ Adds `speckit.vsa.check`, which checks a feature's artifacts and code against th
 ## Requirements
 
 - Spec-Kit 1.2.5 or later.
-- The `vertical-slice` preset, version 0.25.x. An extension manifest cannot require a preset, so the check tests for it when it runs and reports `NOT RUN` if it's missing, disabled, or a different version.
+- The `vertical-slice` preset, version 0.26.x. An extension manifest cannot require a preset, so the check tests for it when it runs and reports `NOT RUN` if it's missing, disabled, or a different version.
 
 ## Install and remove
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.26.0
+
+### Added
+
+- Constitution principle: Review converges. Get it in an adopted constitution by running `/speckit-constitution` again.
+- Requires vsa `>=0.20.0,<0.21.0`.
+
 ## 0.25.0
 
 ### Added
