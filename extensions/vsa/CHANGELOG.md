@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.20.0
+
+### Changed
+
+- A finding cites its rule. A re-run reviews only the lines changed since the previous report, and blocks on a new finding only for a regression the change caused.
+- Supports vertical-slice 0.26.x.
+
 ## 0.19.0
 
 ### Changed

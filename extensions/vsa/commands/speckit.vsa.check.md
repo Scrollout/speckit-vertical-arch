@@ -22,10 +22,10 @@ This command is read-only. Do not change any artifact or code. Report only what 
    The vsa check needs the vertical-slice preset, which is not active in this project.
    ```
 
-2. Read the `version` of the `vertical-slice` entry. This check supports `>=0.25.0` and `<0.26.0`. If the version is outside that range, print the report with status `NOT RUN` and this message, then stop:
+2. Read the `version` of the `vertical-slice` entry. This check supports `>=0.26.0` and `<0.27.0`. If the version is outside that range, print the report with status `NOT RUN` and this message, then stop:
 
    ```text
-   The vsa check supports vertical-slice 0.25.x, but this project has <version>. Install matching versions of the preset and the extension.
+   The vsa check supports vertical-slice 0.26.x, but this project has <version>. Install matching versions of the preset and the extension.
    ```
 
 3. Take the feature directory from this prompt when it names one. Otherwise read `feature_directory` from `.specify/feature.json`. If neither gives a directory, or the directory does not exist, print the report with status `NOT RUN`, say that no current feature could be found, then stop.
@@ -38,7 +38,7 @@ The author of the work should not review it. Use the first variant that is possi
 2. Otherwise, if you can start a sub-agent with no prior context, start one. Give it only the full text of this command, the feature directory, the line `You are the fresh reviewer`, and, on a re-run, the previous report. Print its report as the result, with **Reviewer**: `fresh sub-agent`, and add no findings of your own. When the reviewer runs the test command or any other tool that writes, it works in its own copy of the repository, in a folder of its own, with its own state. It never runs git in the real working tree and never writes there. When git is available, its copy includes the default branch, so comparisons with the merge base work, and the working tree's uncommitted changes, including untracked files, which the Scope counts. It takes the feature directory from this prompt, because a file kept out of version control, such as `.specify/feature.json`, may not be in the copy. Parallel reviewers never share a folder.
 3. Otherwise, record **Reviewer**: `same session (fresh review NOT RUN: no sub-agent support)`, and run the check yourself. Rely only on the files, and disregard what you remember about writing them.
 
-On a re-run, the prompt includes the previous report. Verify each of its findings first, including that each warning now has a home in `tasks.md`. A previous warning with no home, meaning it is neither fixed, nor a task in an `#### Open items` group, nor a checked task ending `closed: <reason>`, is reported again as a warning under its own rule ID, with `no home in tasks.md` in Detail. Then review only the artifacts and code changed since that report, and report what is still open and what is new.
+On a re-run, the prompt includes the previous report. Verify each of its findings first, including that each warning now has a home in `tasks.md`. A previous warning with no home, meaning it is neither fixed, nor a task in an `#### Open items` group, nor a checked task ending `closed: <reason>`, is reported again as a warning under its own rule ID, with `no home in tasks.md` in Detail. Then review only the lines changed since that report. A new blocking finding is allowed there only for a regression the change caused. Report what is still open and what is new.
 
 ## 3. Scope
 
@@ -50,7 +50,7 @@ List anything in scope that does not exist under **Not examined**, with the reas
 
 ## 4. Method
 
-Find the evidence by progressive distributed disclosure. Start from the cheapest signals: the plan's tables, each context's `manifest`, the test command, and the check configurations. Open the files they name, at the smallest useful depth. After each step, re-rank what is left by how likely it is to decide a rule, and stop when each rule is decided for each location in scope. Every finding cites its evidence, and every rule that holds says why.
+Find the evidence by progressive distributed disclosure. Start from the cheapest signals: the plan's tables, each context's `manifest`, the test command, and the check configurations. Open the files they name, at the smallest useful depth. After each step, re-rank what is left by how likely it is to decide a rule, and stop when each rule is decided for each location in scope. Every finding cites its rule and its evidence, and every rule that holds says why. A concern that no rule here covers is not a finding.
 
 ## 5. Rules
 

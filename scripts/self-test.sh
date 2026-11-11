@@ -149,6 +149,8 @@ extensions/vsa/commands/speckit.vsa.check.md|The position of an `#### Open items
 presets/vertical-slice/commands/speckit.tasks.prepend.md|Give every warning the review reports a home
 presets/vertical-slice/templates/constitution-addendum.md|**Findings have a home**
 presets/vertical-slice/templates/constitution-addendum.md|**Tests change only through a fresh agent**
+presets/vertical-slice/templates/constitution-addendum.md|**Review converges**
+extensions/vsa/commands/speckit.vsa.check.md|only for a regression the change caused
 presets/vertical-slice/commands/speckit.implement.prepend.md|do not change, skip, or remove a test that judges your code
 extensions/vsa/commands/speckit.vsa.check.md|without a `Test-author:` trailer
 RULES
